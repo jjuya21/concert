@@ -133,13 +133,13 @@ erDiagram
     CONCERT_ITEM {
         UUID id PK
         UUID concert_id FK
-        date concert_dates
+        date concert_date
         string status
     }
 
     SEAT {
         UUID id PK
-        UUID concert_item_id
+        UUID concert_item_id FK
         int seat_number
         int price
         string status

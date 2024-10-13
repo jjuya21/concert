@@ -150,7 +150,7 @@ erDiagram
     PAYMENT {
         UUID id PK
         UUID user_id FK
-        UUID concert_id FK
+        UUID reservation_id FK
         decimal amount
         datetime payment_date
     }
@@ -184,6 +184,7 @@ erDiagram
     CONCERT ||--o{ CONCERT_ITEM : ""
     USER ||--o{ PAYMENT : ""
     USER }o--o{ RESERVATION : ""
+    RESERVATION ||--|| PAYMENT : ""
 ```
 
 ## 기술 스택

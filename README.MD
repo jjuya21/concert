@@ -125,6 +125,7 @@ erDiagram
     QUEUETOKEN {
         UUID id PK
         UUID user_id FK
+        UUID concert_item_id FK
         int queue_position
         string status
         datetime expiry_time

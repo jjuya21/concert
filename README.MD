@@ -194,8 +194,6 @@ erDiagram
 - **Spring Boot**
     - Spring Web
     - Spring Validation
-    - Spring Security
-    - Jwt
     - Spring Data JPA
     - Lombok
 

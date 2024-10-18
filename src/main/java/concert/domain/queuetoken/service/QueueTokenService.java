@@ -34,6 +34,7 @@ public class QueueTokenService {
         queueToken = repository.update(QueueToken.builder()
                 .token(queueToken.getToken())
                 .status(queueToken.getStatus())
+                .queuePosition(queueToken.getQueuePosition())
                 .expiryTime(queueToken.getExpiryTime())
                 .build()
         );

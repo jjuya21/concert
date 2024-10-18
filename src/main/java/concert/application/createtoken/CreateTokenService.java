@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +20,25 @@ public class CreateTokenService {
     @Transactional
     public QueueToken createToken() {
 
-         QueueToken queueToken = queueTokenRepository.create(
+        List<QueueToken> tokens = queueTokenService.getProcessedTokens();
+        long remainingSeats = 50L - tokens.size();
+        TokenStatus status = TokenStatus.WAIT;
+        if (remainingSeats > 0L) {
+            status = TokenStatus.PROCESSED;
+        }
+        QueueToken queueToken = queueTokenRepository.create(
                 QueueToken.builder()
-                        .status(TokenStatus.WAIT)
+                        .queuePosition(0L)
+                        .status(status)
                         .expiryTime(LocalDateTime.now().plusMinutes(30))
                         .build()
-            );
+        );
 
-         queueToken = queueTokenService.createQueuePosition(
-                 QueueTokenRequest.builder()
-                         .token(queueToken.getToken())
-                         .build()
-         );
+        queueToken = queueTokenService.createQueuePosition(
+                QueueTokenRequest.builder()
+                        .token(queueToken.getToken())
+                        .build()
+        );
 
         return queueToken;
     }

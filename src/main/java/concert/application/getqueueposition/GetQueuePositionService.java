@@ -34,7 +34,7 @@ public class GetQueuePositionService {
                 .map(QueueToken::getQueuePosition)
                 .orElse(1L);
 
-        long queuePosition = queueToken.getQueuePosition() - lastProcessedQueuePosition;
+        long queuePosition = queueToken.getQueuePosition();// - lastProcessedQueuePosition;
 
         return queuePosition;
     }

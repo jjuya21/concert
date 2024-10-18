@@ -7,11 +7,14 @@ import concert.domain.queuetoken.service.QueueTokenRequest;
 import concert.domain.queuetoken.service.QueueTokenService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Component
 @RequiredArgsConstructor
 public class QueueCheckScheduled {
 
@@ -20,16 +23,17 @@ public class QueueCheckScheduled {
 
     private static long MAX_QUEUE_PASS_CAPACITY = 50L;
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 10000)
+    @Transactional
+    @Scheduled(initialDelay = 1000, fixedDelay = 5000)
     public void getQueuePosition() {
 
-        Stream<QueueToken> tokens = queueTokenService.getProcessedTokens().stream();
-        long remainingSeats = MAX_QUEUE_PASS_CAPACITY - tokens.count();
+        List<QueueToken> tokens = queueTokenService.getProcessedTokens();
+        long remainingSeats = MAX_QUEUE_PASS_CAPACITY - tokens.size();
 
-        if (remainingSeats <= MAX_QUEUE_PASS_CAPACITY) {
+        if (remainingSeats > 0L) {
 
             List<QueueToken> queueTokens = queueTokenRepository.getAll();
-            long nextProcessQueuePosition = tokens
+            long nextProcessQueuePosition = tokens.stream()
                     .max(Comparator.comparing(QueueToken::getQueuePosition))
                     .map(QueueToken::getQueuePosition)
                     .map(maxPosition -> maxPosition + 1L)
@@ -37,8 +41,7 @@ public class QueueCheckScheduled {
 
             for (QueueToken queueToken : queueTokens) {
 
-                if (nextProcessQueuePosition == queueToken.getQueuePosition()) {
-
+                if (nextProcessQueuePosition == queueToken.getQueuePosition() && queueToken.getStatus() == TokenStatus.WAIT) {
                     queueTokenService.updateStatus(
                             QueueTokenRequest.builder()
                                     .token(queueToken.getToken())

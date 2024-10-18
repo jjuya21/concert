@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+
 @Service
 @RequiredArgsConstructor
 public class PaymentService {
@@ -60,6 +62,7 @@ public class PaymentService {
                         .userId(command.getUserId())
                         .reservationId(command.getReservationId())
                         .status(PaymentStatus.PAYED)
+                        .createdAt(LocalDateTime.now())
                         .build()
         );
 

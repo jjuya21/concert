@@ -36,9 +36,9 @@ public class Seat {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SeatStatus status = SeatStatus.EMPTY;;
+    private SeatStatus status;
 
-    @Column(name = "hold_expiry_time")
+    @Column(name = "hold_expiry_time", nullable = false)
     private LocalDateTime holdExpiryTime;
 
     public void setStatus(SeatStatus status) {

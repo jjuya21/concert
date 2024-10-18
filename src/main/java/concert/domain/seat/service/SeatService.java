@@ -27,6 +27,7 @@ public class SeatService {
         seat = seatRepository.updateStatus(
                 Seat.builder()
                         .id(request.getSeatId())
+                        .seatNo(seat.getSeatNo())
                         .concertItemId(seat.getConcertItemId())
                         .price(seat.getPrice())
                         .status(seat.getStatus())

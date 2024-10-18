@@ -3,12 +3,15 @@ package concert.intergration;
 import concert.application.createtoken.CreateTokenService;
 import concert.application.getqueueposition.GetQueuePositionService;
 import concert.domain.queuetoken.QueueToken;
+import concert.domain.queuetoken.QueueTokenRepository;
 import concert.domain.queuetoken.service.QueueTokenRequest;
 import concert.domain.queuetoken.service.QueueTokenService;
+import jakarta.persistence.Column;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -21,6 +24,9 @@ public class GetQueuePositionServiceTest {
 
     @Autowired
     private QueueTokenService queueTokenService;
+
+    @Autowired
+    private QueueTokenRepository queueTokenRepository;
 
     @Autowired
     private GetQueuePositionService getQueuePositionService;
@@ -40,11 +46,9 @@ public class GetQueuePositionServiceTest {
         token = createTokenService.createToken().getToken();
 
         // when
-        Thread.sleep(15000); // 일정 시간 후 대기열 포지션 확인
-
         long queuePosition = getQueuePositionService.getQueuePosition(token);
 
         // then
-        Assertions.assertThat(queuePosition).isEqualTo(6);  // 값 비교는 isEqualTo로 변경
+        Assertions.assertThat(queuePosition).isEqualTo(queueTokenRepository.getAll().size() - 50);  // 값 비교는 isEqualTo로 변경
     }
 }

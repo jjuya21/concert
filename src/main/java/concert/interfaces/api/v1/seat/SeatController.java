@@ -20,12 +20,10 @@ public class SeatController {
 
     @GetMapping("/{concertItemId}/available-seats")
     public ResponseEntity<List<SeatResponse>> getAvailableSeats(
-            @PathVariable("concertItemId") long concertItemId,
-            @RequestParam String token) {
+            @PathVariable("concertItemId") long concertItemId) throws Exception {
 
         List<SeatResponse> responses = getSeats.getSeats(
                 GetSeatsCommand.builder()
-                        .token(token)
                         .concertItemId(concertItemId)
                         .build()
         ).stream().map(SeatResponse::from).toList();

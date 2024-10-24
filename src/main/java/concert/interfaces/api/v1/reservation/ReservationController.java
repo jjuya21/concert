@@ -16,11 +16,10 @@ public class ReservationController {
 
     @PostMapping("/{userId}")
     public ResponseEntity<ReservationResponse> reservation(@PathVariable("userId") long userId,
-                                                           @RequestBody ReservationRequest request) {
+                                                           @RequestBody ReservationRequest request) throws Exception {
 
         Reservation reservation = reserve.reserve(
                 ReserveCommand.builder()
-                        .token(request.getToken())
                         .userId(userId)
                         .seatId(request.getSeatId())
                         .build()

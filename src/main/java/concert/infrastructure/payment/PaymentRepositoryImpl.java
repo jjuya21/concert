@@ -2,7 +2,6 @@ package concert.infrastructure.payment;
 
 import concert.domain.payment.Payment;
 import concert.domain.payment.PaymentRepository;
-import concert.infrastructure.balance.BalanceJpaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 

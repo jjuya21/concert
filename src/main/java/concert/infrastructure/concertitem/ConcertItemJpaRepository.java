@@ -4,9 +4,12 @@ import concert.domain.concertitem.ConcertItem;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 public interface ConcertItemJpaRepository extends JpaRepository<ConcertItem, Long> {
 
-    List<ConcertItem> findByConcertId(long concertId);
+    Optional<List<ConcertItem>> findByConcertId(long concertId);
+
+    ConcertItem save(ConcertItem concertItem);
+
 }

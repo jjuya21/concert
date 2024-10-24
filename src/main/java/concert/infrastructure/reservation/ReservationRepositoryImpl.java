@@ -5,7 +5,7 @@ import concert.domain.reservation.ReservationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,7 +19,7 @@ public class ReservationRepositoryImpl implements ReservationRepository {
     }
 
     @Override
-    public Reservation getReservation(long reservationId) {
+    public Optional<Reservation> getReservation(long reservationId) {
         return jpaRepository.findById(reservationId);
     }
 

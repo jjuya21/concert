@@ -1,12 +1,12 @@
 package concert.domain.reservation;
 
-import java.util.UUID;
+import java.util.Optional;
 
 public interface ReservationRepository {
 
     Reservation reserve(Reservation reservation);
 
-    Reservation getReservation(long reservationId);
+    Optional<Reservation> getReservation(long reservationId);
 
     Reservation updateReservation(Reservation reservation);
 }

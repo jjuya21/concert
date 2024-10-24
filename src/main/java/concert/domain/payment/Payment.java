@@ -33,7 +33,7 @@ public class Payment {
     private PaymentStatus status;
 
     @Column(nullable = false)
-    private LocalDateTime createdAt = LocalDateTime.now();
+    private LocalDateTime createdAt;
 
     public void setStatus(PaymentStatus status) {
         this.status = status;

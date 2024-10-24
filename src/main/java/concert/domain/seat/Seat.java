@@ -1,16 +1,12 @@
 package concert.domain.seat;
 
-import concert.domain.payment.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "SEAT_TABLE")
@@ -28,7 +24,7 @@ public class Seat {
     @Column(name = "seat_no", nullable = false)
     private Long seatNo;
 
-    @Column(name = "concert_item_id" ,nullable = false)
+    @Column(name = "concert_item_id", nullable = false)
     private Long concertItemId;
 
     @Column(nullable = false)
@@ -36,7 +32,7 @@ public class Seat {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private SeatStatus status = SeatStatus.EMPTY;;
+    private SeatStatus status;
 
     @Column(name = "hold_expiry_time")
     private LocalDateTime holdExpiryTime;

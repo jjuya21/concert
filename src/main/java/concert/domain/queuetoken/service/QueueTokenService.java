@@ -15,14 +15,15 @@ public class QueueTokenService {
 
     private final QueueTokenRepository repository;
 
-    public QueueToken getQueueToken(QueueTokenInfo info) {
+    public QueueToken getQueueToken(QueueTokenInfo info) throws Exception {
 
-        QueueToken queueToken = repository.getByToken(info.getToken());
+        QueueToken queueToken = repository.getByToken(info.getToken())
+                .orElseThrow(() -> new Exception("토큰이 존재하지 않습니다."));
 
         return queueToken;
     }
 
-    public QueueToken updateStatus(QueueTokenInfo info) {
+    public QueueToken updateStatus(QueueTokenInfo info) throws Exception {
 
         QueueToken queueToken = getQueueToken(info);
         queueToken.setStatus(info.getStatus());
@@ -39,7 +40,7 @@ public class QueueTokenService {
         return queueToken;
     }
 
-    public QueueToken updateExpiryTime(QueueTokenInfo info) {
+    public QueueToken updateExpiryTime(QueueTokenInfo info) throws Exception {
 
         QueueToken queueToken = getQueueToken(info);
         queueToken.setExpiryTime(info.getExpiryTime());
@@ -56,7 +57,7 @@ public class QueueTokenService {
         return queueToken;
     }
 
-    public QueueToken createQueuePosition(QueueTokenInfo info) {
+    public QueueToken createQueuePosition(QueueTokenInfo info) throws Exception {
 
         QueueToken queueToken = getQueueToken(info);
 

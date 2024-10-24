@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -29,7 +30,7 @@ public class SeatRepositoryImpl implements SeatRepository {
     }
 
     @Override
-    public Seat getById(long seatId) {
+    public Optional<Seat> getById(long seatId) {
         return jpaRepository.findById(seatId);
     }
 

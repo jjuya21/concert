@@ -1,6 +1,5 @@
 package concert.application.getseats;
 
-import concert.application.TokenCheck;
 import concert.domain.seat.Seat;
 import concert.domain.seat.SeatRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +13,9 @@ import java.util.List;
 public class GetSeats {
 
     private final SeatRepository seatRepository;
-    private final TokenCheck tokenCheck;
 
     @Transactional
-    public List<Seat> getSeats(GetSeatsCommand command) {
-
-        tokenCheck.tokenCheck(command.getToken());
+    public List<Seat> getSeats(GetSeatsCommand command) throws Exception {
 
         List<Seat> seats = seatRepository.getByConcertItemId(command.getConcertItemId());
 

@@ -24,7 +24,7 @@ public class CreateToken {
     private long maxQueuePassCapacity;
 
     @Transactional
-    public QueueToken createToken() {
+    public QueueToken createToken() throws Exception {
 
         List<QueueToken> tokens = queueTokenService.getProcessedTokens();
         long remainingSeats = maxQueuePassCapacity - tokens.size();

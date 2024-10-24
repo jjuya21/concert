@@ -1,6 +1,7 @@
 package concert.domain.seat;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SeatRepository {
 
@@ -10,7 +11,7 @@ public interface SeatRepository {
 
     Seat create(Seat seat);
 
-    Seat getById(long seatId);
+    Optional<Seat> getById(long seatId);
 
     void deleteAll();
 }

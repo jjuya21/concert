@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -19,13 +20,13 @@ public class QueueTokenRepositoryImpl implements QueueTokenRepository {
     }
 
     @Override
-    public QueueToken getByToken(String token) {
+    public Optional<QueueToken> getByToken(String token) {
 
         return jpaRepository.findByToken(token);
     }
 
     @Override
-    public QueueToken getByQueuePosition(long queuePosition) {
+    public Optional<QueueToken> getByQueuePosition(long queuePosition) {
         return jpaRepository.findByQueuePosition(queuePosition);
     }
 

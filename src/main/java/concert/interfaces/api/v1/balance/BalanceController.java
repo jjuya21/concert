@@ -19,7 +19,7 @@ public class BalanceController {
     private final ChargeBalance chargeBalance;
 
     @GetMapping("/{userId}")
-    public ResponseEntity<BalanceResponse> getBalance(@PathVariable("userId") long userId) {
+    public ResponseEntity<BalanceResponse> getBalance(@PathVariable("userId") long userId) throws Exception {
 
         Balance balance = balanceService.getBalance(
                 BalanceInfo.builder()
@@ -33,7 +33,7 @@ public class BalanceController {
 
     @PostMapping("/{userId}")
     public ResponseEntity<BalanceResponse> chargeBalance(@PathVariable("userId") long userId,
-                                                         @RequestBody BalanceRequest request) {
+                                                         @RequestBody BalanceRequest request) throws Exception {
 
         Balance balance = chargeBalance.chargeBalance(
                 ChargeBalanceCommand.builder()

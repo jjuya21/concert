@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReserveCommand {
 
-    private String token;
     private long userId;
     private long seatId;
 }

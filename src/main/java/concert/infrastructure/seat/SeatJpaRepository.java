@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Lock;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface SeatJpaRepository extends JpaRepository<Seat, Long> {
 
@@ -14,5 +15,5 @@ public interface SeatJpaRepository extends JpaRepository<Seat, Long> {
     Seat save(Seat seat);
 
     @Lock(LockModeType.PESSIMISTIC_WRITE)
-    Seat findById(long seatId);
+    Optional<Seat> findById(long seatId);
 }

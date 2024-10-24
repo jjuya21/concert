@@ -11,6 +11,5 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class GetConcertDatesCommand {
 
-    private String token;
     private long concertId;
 }

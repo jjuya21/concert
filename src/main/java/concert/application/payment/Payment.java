@@ -1,6 +1,5 @@
 package concert.application.payment;
 
-import concert.application.TokenCheck;
 import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
 import concert.domain.payment.PaymentRepository;
@@ -30,14 +29,11 @@ public class Payment {
     private final QueueTokenRepository queueTokenRepository;
     private final QueueTokenService queueTokenService;
     private final SeatService seatService;
-    private final TokenCheck tokenCheck;
 
     @Transactional
-    public concert.domain.payment.Payment payment(PaymentCommand command) {
+    public concert.domain.payment.Payment payment(PaymentCommand command) throws Exception {
 
-        tokenCheck.tokenCheck(command.getToken());
-
-        Reservation reservation = reservationRepository.getReservation(command.getReservationId());
+        Reservation reservation = reservationRepository.getReservation(command.getReservationId()).get();
 
         balanceService.useBalance(
                 BalanceInfo.builder()

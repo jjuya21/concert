@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -30,13 +31,13 @@ public class QueueTokenServiceTest {
     private QueueTokenService queueTokenService;
 
     @Test
-    void getQueueTokenTest() {
+    void getQueueTokenTest() throws Exception {
         // given
         QueueToken queueToken = QueueToken.builder()
                 .token(token)
                 .build();
 
-        given(queueTokenRepository.getByToken(token)).willReturn(queueToken);
+        given(queueTokenRepository.getByToken(token)).willReturn(Optional.ofNullable(queueToken));
 
         // when
         QueueToken result = queueTokenService.getQueueToken(QueueTokenInfo.builder().token(token).build());
@@ -47,7 +48,7 @@ public class QueueTokenServiceTest {
     }
 
     @Test
-    void updateStatusTest() {
+    void updateStatusTest() throws Exception {
         // given
         QueueToken savedQueueToken = QueueToken.builder()
                 .id(1L)
@@ -82,7 +83,7 @@ public class QueueTokenServiceTest {
 
 
     @Test
-    void updateExpiryTimeTest() {
+    void updateExpiryTimeTest() throws Exception {
         // given
         LocalDateTime updateExpiryTime = LocalDateTime.now().plusMinutes(30);
 
@@ -121,7 +122,7 @@ public class QueueTokenServiceTest {
     }
 
     @Test
-    void createQueuePositionTest() {
+    void createQueuePositionTest() throws Exception {
         // given
         QueueToken savedQueueToken = QueueToken.builder()
                 .id(1L)

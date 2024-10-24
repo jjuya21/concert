@@ -1,6 +1,5 @@
 package concert.application.reserve;
 
-import concert.application.TokenCheck;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
@@ -16,13 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 public class Reserve {
 
     private final ReservationRepository reservationRepository;
-    private final TokenCheck tokenCheck;
     private final SeatService seatService;
 
     @Transactional
-    public Reservation reserve(ReserveCommand command) {
-
-        tokenCheck.tokenCheck(command.getToken());
+    public Reservation reserve(ReserveCommand command) throws Exception {
 
         SeatStatus seatStatus = seatService.getSeat(
                 SeatInfo.builder()

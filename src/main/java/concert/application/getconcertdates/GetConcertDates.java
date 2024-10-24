@@ -1,6 +1,5 @@
 package concert.application.getconcertdates;
 
-import concert.application.TokenCheck;
 import concert.domain.concertitem.ConcertItem;
 import concert.domain.concertitem.ConcertItemRepository;
 import lombok.RequiredArgsConstructor;
@@ -14,14 +13,12 @@ import java.util.List;
 public class GetConcertDates {
 
     private final ConcertItemRepository concertItemRepository;
-    private final TokenCheck tokenCheck;
 
     @Transactional
-    public List<ConcertItem> getConcertDates(GetConcertDatesCommand command) {
+    public List<ConcertItem> getConcertDates(GetConcertDatesCommand command) throws Exception {
 
-        tokenCheck.tokenCheck(command.getToken());
-
-        List<ConcertItem> concertItems = concertItemRepository.getByConcertId(command.getConcertId());
+        List<ConcertItem> concertItems = concertItemRepository.getByConcertId(command.getConcertId())
+                .orElseThrow(() -> new Exception("콘서트 날짜가 존재하지 않습니다."));
 
         return concertItems;
     }

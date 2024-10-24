@@ -14,7 +14,7 @@ public class GetQueuePosition {
     private final QueueTokenService queueTokenService;
 
     @Transactional
-    public long getQueuePosition(String token) {
+    public long getQueuePosition(String token) throws Exception {
 
         QueueToken queueToken = queueTokenService.getQueueToken(
                 QueueTokenInfo.builder()

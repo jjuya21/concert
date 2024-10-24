@@ -14,7 +14,7 @@ public class ChargeBalance {
     private final BalanceService balanceService;
 
     @Transactional
-    public Balance chargeBalance(ChargeBalanceCommand command) {
+    public Balance chargeBalance(ChargeBalanceCommand command) throws Exception {
 
         Balance balance = balanceService.chargeBalance(
                 BalanceInfo.builder()

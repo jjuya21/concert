@@ -38,8 +38,8 @@ class BalanceChargeServiceTest {
     private long amount;
 
     @BeforeEach
-    void setUp() {
-        // 테스트에 필요한 데이터 초기화
+    void setUp() throws Exception {
+
         token = createToken.createToken().getToken();
         queueTokenService.updateStatus(
                 QueueTokenInfo.builder()
@@ -47,16 +47,16 @@ class BalanceChargeServiceTest {
                         .status(TokenStatus.PROCESSED)
                         .build()
         );
-        userId = 1L; // 테스트를 위한 임의의 사용자 ID
-        amount = 200L; // 테스트를 위한 금액
+        userId = 1L;
+        amount = 200L;
     }
 
     @DisplayName("잔액 충전을 하면 amount만큼 금액이 충전되있어야한다")
     @Test
     @Transactional
-    void chargeBalanceTest() {
+    void chargeBalanceTest() throws Exception {
         // Given
-        ChargeBalanceCommand command = new ChargeBalanceCommand(token, userId, amount);
+        ChargeBalanceCommand command = new ChargeBalanceCommand(userId, amount);
 
         // When
         Balance actualBalance = chargeBalance.chargeBalance(command);

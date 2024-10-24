@@ -5,7 +5,7 @@ import concert.domain.balance.BalanceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.UUID;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -14,7 +14,7 @@ public class BalanceRepositoryImpl implements BalanceRepository {
     private final BalanceJpaRepository jpaRepository;
 
     @Override
-    public Balance getBalance(long userId) {
+    public Optional<Balance> getBalance(long userId) {
         return jpaRepository.findByUserId(userId);
     }
 

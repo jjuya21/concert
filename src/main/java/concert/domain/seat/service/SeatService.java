@@ -27,14 +27,15 @@ public class SeatService {
         return seat;
     }
 
-    public Seat getSeat(SeatInfo info) {
+    public Seat getSeat(SeatInfo info) throws Exception {
 
-        Seat seat = seatRepository.getById(info.getSeatId());
+        Seat seat = seatRepository.getById(info.getSeatId())
+                .orElseThrow(() -> new Exception("좌석이 존재하지 않습니다."));
 
         return seat;
     }
 
-    public Seat updateStatus(SeatInfo info) {
+    public Seat updateStatus(SeatInfo info) throws Exception {
 
         try {
             Seat seat = getSeat(info);

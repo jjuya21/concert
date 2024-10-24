@@ -1,15 +1,11 @@
 package concert.application.reserve;
 
 import concert.application.TokenCheck;
-import concert.domain.balance.service.BalanceService;
-import concert.domain.payment.PaymentRepository;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
-import concert.domain.seat.Seat;
-import concert.domain.seat.SeatRepository;
 import concert.domain.seat.SeatStatus;
-import concert.domain.seat.service.SeatRequest;
+import concert.domain.seat.service.SeatInfo;
 import concert.domain.seat.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -17,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ReserveService {
+public class Reserve {
 
     private final ReservationRepository reservationRepository;
     private final TokenCheck tokenCheck;
@@ -28,8 +24,18 @@ public class ReserveService {
 
         tokenCheck.tokenCheck(command.getToken());
 
+        SeatStatus seatStatus = seatService.getSeat(
+                SeatInfo.builder()
+                        .seatId(command.getSeatId())
+                        .build()
+        ).getStatus();
+
+        if (seatStatus == SeatStatus.HOLDING || seatStatus == SeatStatus.RESERVED) {
+            throw new RuntimeException("이미 선점된 좌석입니다.");
+        }
+
         long price = seatService.updateStatus(
-                SeatRequest.builder()
+                SeatInfo.builder()
                         .seatId(command.getSeatId())
                         .status(SeatStatus.HOLDING)
                         .build()

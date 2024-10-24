@@ -1,33 +1,43 @@
 package concert.application.createtoken;
 
-import concert.domain.queuetoken.*;
-import concert.domain.queuetoken.service.QueueTokenRequest;
+import concert.domain.queuetoken.QueueToken;
+import concert.domain.queuetoken.QueueTokenRepository;
+import concert.domain.queuetoken.TokenStatus;
+import concert.domain.queuetoken.service.QueueTokenInfo;
 import concert.domain.queuetoken.service.QueueTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
-public class CreateTokenService {
+public class CreateToken {
 
     private final QueueTokenRepository queueTokenRepository;
     private final QueueTokenService queueTokenService;
+    @Value("${custom.queue.max-capacity}")
+    private long maxQueuePassCapacity;
 
     @Transactional
     public QueueToken createToken() {
 
         List<QueueToken> tokens = queueTokenService.getProcessedTokens();
-        long remainingSeats = 50L - tokens.size();
+        long remainingSeats = maxQueuePassCapacity - tokens.size();
         TokenStatus status = TokenStatus.WAIT;
         if (remainingSeats > 0L) {
             status = TokenStatus.PROCESSED;
         }
+
+        String token = UUID.randomUUID().toString();
+
         QueueToken queueToken = queueTokenRepository.create(
                 QueueToken.builder()
+                        .token(token)
                         .queuePosition(0L)
                         .status(status)
                         .expiryTime(LocalDateTime.now().plusMinutes(30))
@@ -35,7 +45,7 @@ public class CreateTokenService {
         );
 
         queueToken = queueTokenService.createQueuePosition(
-                QueueTokenRequest.builder()
+                QueueTokenInfo.builder()
                         .token(queueToken.getToken())
                         .build()
         );

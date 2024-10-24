@@ -1,16 +1,13 @@
 package concert.interfaces.api.v1.seat;
 
+import concert.application.getseats.GetSeats;
 import concert.application.getseats.GetSeatsCommand;
-import concert.application.getseats.GetSeatsService;
-import concert.domain.seat.Seat;
+import concert.domain.seat.service.SeatInfo;
+import concert.domain.seat.service.SeatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RequestMapping("/v1/api/seat")
@@ -18,17 +15,35 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SeatController {
 
-    private final GetSeatsService getSeatsService;
+    private final SeatService seatService;
+    private final GetSeats getSeats;
 
     @GetMapping("/{concertItemId}/available-seats")
-    public ResponseEntity<List<SeatResponse>> getAvailableSeats(@PathVariable("concertItemId") long concertItemId) {
+    public ResponseEntity<List<SeatResponse>> getAvailableSeats(
+            @PathVariable("concertItemId") long concertItemId,
+            @RequestParam String token) {
 
-        List<SeatResponse> responses = getSeatsService.getSeats(
+        List<SeatResponse> responses = getSeats.getSeats(
                 GetSeatsCommand.builder()
+                        .token(token)
                         .concertItemId(concertItemId)
                         .build()
         ).stream().map(SeatResponse::from).toList();
 
         return ResponseEntity.ok(responses);
+    }
+
+    @PostMapping
+    public ResponseEntity<SeatResponse> createSeat(@RequestBody SeatRequest request) {
+
+        SeatResponse response = SeatResponse.from(seatService.createSeat(
+                SeatInfo.builder()
+                        .seatNo(request.getSeatNo())
+                        .concertItemId(request.getConcertItemId())
+                        .price(request.getPrice())
+                        .build()
+        ));
+
+        return ResponseEntity.ok(response);
     }
 }

@@ -11,17 +11,17 @@ public class BalanceService {
 
     private final BalanceRepository repository;
 
-    public Balance getBalance(BalanceRequest request) {
+    public Balance getBalance(BalanceInfo info) {
 
-        Balance balance = repository.getBalance(request.getUserId());
+        Balance balance = repository.getBalance(info.getUserId());
 
         return balance;
     }
 
-    public Balance useBalance(BalanceRequest request) {
+    public Balance useBalance(BalanceInfo info) {
 
-        Balance balance = getBalance(request);
-        balance.use(request.getAmount());
+        Balance balance = getBalance(info);
+        balance.use(info.getAmount());
 
         balance = Balance.builder()
                 .id(balance.getId())
@@ -34,10 +34,10 @@ public class BalanceService {
         return balance;
     }
 
-    public Balance chargeBalance(BalanceRequest request) {
+    public Balance chargeBalance(BalanceInfo info) {
 
-        Balance balance = getBalance(request);
-        balance.charge(request.getAmount());
+        Balance balance = getBalance(info);
+        balance.charge(info.getAmount());
 
         balance = Balance.builder()
                 .id(balance.getId())

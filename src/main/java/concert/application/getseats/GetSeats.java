@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GetSeatsService {
+public class GetSeats {
 
     private final SeatRepository seatRepository;
     private final TokenCheck tokenCheck;

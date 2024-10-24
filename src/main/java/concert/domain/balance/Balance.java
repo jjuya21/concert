@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.ColumnDefault;
 
-import java.math.BigDecimal;
-
 @Entity
 @Table(name = "BALANCE_TABLE")
 @Getter
@@ -27,7 +25,7 @@ public class Balance {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private Long balance = 0L;
+    private Long balance;
 
     public void charge(long amount) {
         if (amount <= 0) {
@@ -38,11 +36,11 @@ public class Balance {
     }
 
     public void use(long amount) {
-        if (amount <= 0) {
+        if (amount < 0) {
             throw new IllegalArgumentException("Use amount must be greater than zero.");
         }
 
-        if (amount <= this.balance) {
+        if (amount > this.balance) {
             throw new IllegalArgumentException("Use amount must be less than balance.");
         }
 

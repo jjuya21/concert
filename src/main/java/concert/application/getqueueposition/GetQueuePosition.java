@@ -1,18 +1,20 @@
-package concert.application;
+package concert.application.getqueueposition;
 
 import concert.domain.queuetoken.QueueToken;
 import concert.domain.queuetoken.service.QueueTokenInfo;
 import concert.domain.queuetoken.service.QueueTokenService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Component
+@Service
 @RequiredArgsConstructor
-public class TokenCheck {
+public class GetQueuePosition {
 
     private final QueueTokenService queueTokenService;
 
-    public void tokenCheck(String token) {
+    @Transactional
+    public long getQueuePosition(String token) {
 
         QueueToken queueToken = queueTokenService.getQueueToken(
                 QueueTokenInfo.builder()
@@ -20,9 +22,10 @@ public class TokenCheck {
                         .build()
         );
 
-        if (queueToken.checkIsWait()) {
+        long queuePosition = queueToken.getQueuePosition();
 
-            throw new RuntimeException("대기열 대기중");
-        }
+        System.out.println(queuePosition);
+
+        return queuePosition;
     }
 }

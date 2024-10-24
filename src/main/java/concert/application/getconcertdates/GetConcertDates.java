@@ -11,7 +11,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class GetConcertDatesService {
+public class GetConcertDates {
 
     private final ConcertItemRepository concertItemRepository;
     private final TokenCheck tokenCheck;

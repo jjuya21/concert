@@ -1,28 +1,25 @@
 package concert.interfaces.api.v1.payment;
 
+import concert.application.payment.Payment;
 import concert.application.payment.PaymentCommand;
-import concert.application.payment.PaymentService;
-import concert.domain.payment.Payment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @RequestMapping("/v1/api/payment")
 @RestController
 @RequiredArgsConstructor
 public class PaymentController {
 
-    private final PaymentService paymentService;
+    private final Payment payment;
 
     @PostMapping("/{reservationId}")
-    public ResponseEntity<PaymentResponse> getPayment(@PathVariable long reservationId) {
+    public ResponseEntity<PaymentResponse> getPayment(@PathVariable long reservationId,
+                                                      @RequestBody PaymentRequest request) {
 
-        Payment payment = paymentService.payment(
+        concert.domain.payment.Payment payment = this.payment.payment(
                 PaymentCommand.builder()
+                        .token(request.getToken())
                         .reservationId(reservationId)
                         .build()
         );

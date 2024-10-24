@@ -3,16 +3,16 @@ package concert.application;
 import concert.domain.queuetoken.QueueToken;
 import concert.domain.queuetoken.QueueTokenRepository;
 import concert.domain.queuetoken.TokenStatus;
-import concert.domain.queuetoken.service.QueueTokenRequest;
+import concert.domain.queuetoken.service.QueueTokenInfo;
 import concert.domain.queuetoken.service.QueueTokenService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Stream;
+
 
 @Component
 @RequiredArgsConstructor
@@ -20,36 +20,31 @@ public class QueueCheckScheduled {
 
     private final QueueTokenService queueTokenService;
     private final QueueTokenRepository queueTokenRepository;
+    @Value("${custom.queue.max-capacity}")
+    private long maxQueuePassCapacity;
 
-    private static long MAX_QUEUE_PASS_CAPACITY = 50L;
-
-    @Transactional
     @Scheduled(initialDelay = 1000, fixedDelay = 5000)
-    public void getQueuePosition() {
+    public void passNextInQueue() {
 
         List<QueueToken> tokens = queueTokenService.getProcessedTokens();
-        long remainingSeats = MAX_QUEUE_PASS_CAPACITY - tokens.size();
+        long remainingSeats = maxQueuePassCapacity - tokens.size();
 
         if (remainingSeats > 0L) {
 
-            List<QueueToken> queueTokens = queueTokenRepository.getAll();
             long nextProcessQueuePosition = tokens.stream()
                     .max(Comparator.comparing(QueueToken::getQueuePosition))
                     .map(QueueToken::getQueuePosition)
                     .map(maxPosition -> maxPosition + 1L)
                     .orElse(1L);
 
-            for (QueueToken queueToken : queueTokens) {
+            QueueToken queueToken = queueTokenRepository.getByQueuePosition(nextProcessQueuePosition);
 
-                if (nextProcessQueuePosition == queueToken.getQueuePosition() && queueToken.getStatus() == TokenStatus.WAIT) {
-                    queueTokenService.updateStatus(
-                            QueueTokenRequest.builder()
-                                    .token(queueToken.getToken())
-                                    .status(TokenStatus.PROCESSED)
-                                    .build()
-                    );
-                }
-            }
+            queueTokenService.updateStatus(
+                    QueueTokenInfo.builder()
+                            .token(queueToken.getToken())
+                            .status(TokenStatus.PROCESSED)
+                            .build()
+            );
         }
     }
 }

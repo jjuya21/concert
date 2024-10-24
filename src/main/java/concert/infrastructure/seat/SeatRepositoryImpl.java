@@ -6,7 +6,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
 
 @Repository
 @RequiredArgsConstructor
@@ -20,12 +19,22 @@ public class SeatRepositoryImpl implements SeatRepository {
     }
 
     @Override
-    public Seat updateStatus(Seat seat) {
+    public Seat update(Seat seat) {
+        return jpaRepository.save(seat);
+    }
+
+    @Override
+    public Seat create(Seat seat) {
         return jpaRepository.save(seat);
     }
 
     @Override
     public Seat getById(long seatId) {
         return jpaRepository.findById(seatId);
+    }
+
+    @Override
+    public void deleteAll() {
+        jpaRepository.deleteAll();
     }
 }

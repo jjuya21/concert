@@ -1,15 +1,12 @@
 package concert.interfaces.api.v1.queuetoken;
 
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
 
-import java.time.LocalDate;
-import java.util.UUID;
-
-@NoArgsConstructor
+@Getter
 @AllArgsConstructor
 public class QueueTokenResponse {
 
-    private UUID token;
+    private String token;
     private long queuePosition;
 }

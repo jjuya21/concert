@@ -1,13 +1,13 @@
 package concert.interfaces.api.v1.concertitem;
 
 import concert.domain.concertitem.ConcertItem;
-import concert.domain.seat.Seat;
-import concert.interfaces.api.v1.seat.SeatResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Getter;
 
 import java.time.LocalDate;
 
+@Getter
 @Builder
 @AllArgsConstructor
 public class ConcertItemResponse {

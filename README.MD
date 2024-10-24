@@ -1,6 +1,9 @@
 [마일스톤](https://github.com/users/jjuya21/projects/2)
 
+[회고](https://www.notion.so/STEP-10-1293baa346948054a5e4da68cb65eb3f)
+
 **예매하기 FLOW CHART**
+
 ```mermaid
 flowchart TD
     A["토큰 발급 API"] -- UUID 및 대기열 정보 포함 --> B["토큰 발급 완료"]
@@ -115,6 +118,7 @@ sequenceDiagram
 ```
 
 테이블 ERD
+
 ```mermaid
 erDiagram
     USER {
@@ -190,6 +194,7 @@ erDiagram
 ## 기술 스택
 
 ### Web Application Server
+
 - **Java 21**
 - **Spring Boot**
     - Spring Web
@@ -198,12 +203,15 @@ erDiagram
     - Lombok
 
 ### Database
+
 - **H2** (Domain)
 
 ### Test
+
 - **Spring Boot Test**
 
 ## 패키지 구조
+
 ```
 /
 ├── interfaces

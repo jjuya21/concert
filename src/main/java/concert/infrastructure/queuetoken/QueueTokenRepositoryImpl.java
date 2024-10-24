@@ -2,14 +2,11 @@ package concert.infrastructure.queuetoken;
 
 import concert.domain.queuetoken.QueueToken;
 import concert.domain.queuetoken.QueueTokenRepository;
-import concert.domain.queuetoken.TokenStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.UUID;
-
-import static org.antlr.v4.runtime.tree.xpath.XPath.findAll;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -23,9 +20,14 @@ public class QueueTokenRepositoryImpl implements QueueTokenRepository {
     }
 
     @Override
-    public QueueToken getByToken(UUID token) {
+    public Optional<QueueToken> getByToken(String token) {
 
         return jpaRepository.findByToken(token);
+    }
+
+    @Override
+    public Optional<QueueToken> getByQueuePosition(long queuePosition) {
+        return jpaRepository.findByQueuePosition(queuePosition);
     }
 
     @Override
@@ -42,4 +44,6 @@ public class QueueTokenRepositoryImpl implements QueueTokenRepository {
     public void expiry(QueueToken queueToken) {
         jpaRepository.delete(queueToken);
     }
+
+
 }

@@ -1,10 +1,11 @@
 package concert.domain.concertitem;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 public interface ConcertItemRepository {
 
-    List<ConcertItem> getByConcertId(long concertId);
+    Optional<List<ConcertItem>> getByConcertId(long concertId);
+
     ConcertItem create(ConcertItem concertItem);
 }

@@ -1,16 +1,12 @@
 package concert.domain.queuetoken;
 
-import concert.domain.payment.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "QUEUETOKEN_TABLE")
@@ -21,10 +17,11 @@ import java.util.UUID;
 public class QueueToken {
 
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(updatable = false, nullable = false)
-    private UUID token;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(updatable = false, nullable = false, unique = true)
+    private String token;
 
     @Column(name = "queue_position")
     private Long queuePosition;
@@ -35,6 +32,14 @@ public class QueueToken {
 
     @Column(name = "expiry_time", nullable = false)
     private LocalDateTime expiryTime;
+
+    public boolean checkIsWait() {
+        return this.status == TokenStatus.WAIT;
+    }
+
+    public boolean checkIsProcessed() {
+        return this.status == TokenStatus.PROCESSED;
+    }
 
     public void setStatus(TokenStatus status) {
         this.status = status;

@@ -23,7 +23,7 @@ class PaymentTest {
     @DisplayName("결재를 하면 예매 정보에 맞춰 결제 정보가 생성되어야한다")
     @Test
     @Transactional
-    void paymentTest() {
+    void paymentTest() throws Exception {
         // given
         PaymentCommand command = PaymentCommand.builder()
                 .token(token)

@@ -10,6 +10,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,7 +27,7 @@ public class BalanceServiceTest {
     private BalanceService balanceService;
 
     @Test
-    void getBalance() {
+    void getBalance() throws Exception {
         // given
         Balance savedBalance = Balance.builder()
                 .userId(1L)
@@ -36,7 +38,7 @@ public class BalanceServiceTest {
                 .userId(savedBalance.getUserId())
                 .build();
 
-        given(balanceRepository.getBalance(savedBalance.getUserId())).willReturn(savedBalance);
+        given(balanceRepository.getBalance(savedBalance.getUserId())).willReturn(Optional.of(savedBalance));
 
         // when
         Balance result = balanceService.getBalance(info);
@@ -48,7 +50,7 @@ public class BalanceServiceTest {
     }
 
     @Test
-    void useBalance() {
+    void useBalance() throws Exception {
         // given
         Balance savedBalance = Balance.builder()
                 .userId(1L)
@@ -78,7 +80,7 @@ public class BalanceServiceTest {
     }
 
     @Test
-    void useBalanceWith1Exception() {
+    void useBalanceWith1Exception() throws Exception {
         // given
         Balance savedBalance = Balance.builder()
                 .userId(1L)
@@ -99,7 +101,7 @@ public class BalanceServiceTest {
     }
 
     @Test
-    void useBalanceWith2Exception() {
+    void useBalanceWith2Exception() throws Exception {
         // given
         Balance savedBalance = Balance.builder()
                 .userId(1L)
@@ -120,7 +122,7 @@ public class BalanceServiceTest {
     }
 
     @Test
-    void chargeBalance() {
+    void chargeBalance() throws Exception {
         // given
         Balance savedBalance = Balance.builder()
                 .userId(1L)
@@ -150,7 +152,7 @@ public class BalanceServiceTest {
     }
 
     @Test
-    void chargeBalanceWithException() {
+    void chargeBalanceWithException() throws Exception {
         // given
         Balance savedBalance = Balance.builder()
                 .userId(1L)

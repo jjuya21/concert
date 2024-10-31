@@ -27,21 +27,21 @@ public class Balance {
     @ColumnDefault("0")
     private Long balance;
 
-    public void charge(long amount) {
-        if (amount <= 0) {
-            throw new IllegalArgumentException("Charge amount must be greater than zero.");
+    @Version
+    @Builder.Default
+    private Integer version = 0;
+
+    public void charge(long amount) throws Exception {
+        if (amount < 0) {
+            throw new Exception("충전 금액은 음수일 수 없습니다.");
         }
 
         this.balance = this.balance + amount;
     }
 
-    public void use(long amount) {
-        if (amount < 0) {
-            throw new IllegalArgumentException("Use amount must be greater than zero.");
-        }
-
+    public void use(long amount) throws Exception {
         if (amount > this.balance) {
-            throw new IllegalArgumentException("Use amount must be less than balance.");
+            throw new Exception("잔액이 부족합니다.");
         }
 
         this.balance = this.balance - amount;

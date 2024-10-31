@@ -1,6 +1,6 @@
-package concert.interfaces;
+package concert.interfaces.common;
 
-import concert.interceptor.ValidationTokenInterceptor;
+import concert.interfaces.common.interceptor.ValidationTokenInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;

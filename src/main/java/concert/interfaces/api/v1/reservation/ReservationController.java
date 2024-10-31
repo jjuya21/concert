@@ -5,7 +5,10 @@ import concert.application.reserve.ReserveCommand;
 import concert.domain.reservation.Reservation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/v1/api/reservation")
 @RestController
@@ -14,14 +17,14 @@ public class ReservationController {
 
     private final Reserve reserve;
 
-    @PostMapping("/{userId}")
+    @PostMapping("/{userId}/seat/{seatId}")
     public ResponseEntity<ReservationResponse> reservation(@PathVariable("userId") long userId,
-                                                           @RequestBody ReservationRequest request) throws Exception {
+                                                           @PathVariable("userId") long seatId) throws Exception {
 
-        Reservation reservation = reserve.reserve(
+        Reservation reservation = reserve.reserveWithRedisson(
                 ReserveCommand.builder()
                         .userId(userId)
-                        .seatId(request.getSeatId())
+                        .seatId(seatId)
                         .build()
         );
 

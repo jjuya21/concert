@@ -1,6 +1,5 @@
-package concert.domain.seat.service;
+package concert.interfaces.api.v1.balance;
 
-import concert.domain.seat.SeatStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -10,8 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class SeatRequest {
+public class BalanceRequest {
 
-    private long seatId;
-    private SeatStatus status;
+    private long amount;
 }

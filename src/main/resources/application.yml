@@ -1,0 +1,39 @@
+spring:
+  datasource:
+    url: jdbc:h2:tcp://localhost/~/concertDB
+    username: sa
+    password:
+    driver-class-name: org.h2.Driver
+
+  h2:
+    console:
+      enabled: true
+
+  jpa:
+    defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+  #    properties:
+  #      hibernate:
+  #        show_sql: true
+  #        format_sql: true
+
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:/data.sql
+
+logging:
+  level:
+    org.hibernate.sql: debug
+    org.hibernate.orm.jdbc.bind: trace
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.transaction.interceptor: trace
+    # org.springframework.boot.autoconfigure: DEBUG
+
+custom:
+  queue:
+    max-capacity: 50
+  token: "a8098c1a-f86e-11da-bd1a-00112444be1e"

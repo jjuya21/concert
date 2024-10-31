@@ -1,13 +1,15 @@
 package concert.domain.queuetoken;
 
 import java.util.List;
-import java.util.UUID;
+import java.util.Optional;
 
 public interface QueueTokenRepository {
 
     QueueToken create(QueueToken queueToken);
 
-    QueueToken getByToken(UUID token);
+    Optional<QueueToken> getByToken(String token);
+
+    Optional<QueueToken> getByQueuePosition(long queuePosition);
 
     QueueToken update(QueueToken queueToken);
 

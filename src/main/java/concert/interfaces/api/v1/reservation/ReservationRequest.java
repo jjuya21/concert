@@ -1,4 +1,4 @@
-package concert.application.getconcertdates;
+package concert.interfaces.api.v1.reservation;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GetConcertDatesCommand {
+public class ReservationRequest {
 
-    private long concertId;
+    private long seatId;
 }

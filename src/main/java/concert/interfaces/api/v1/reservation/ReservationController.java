@@ -1,29 +1,27 @@
 package concert.interfaces.api.v1.reservation;
 
+import concert.application.reserve.Reserve;
 import concert.application.reserve.ReserveCommand;
-import concert.application.reserve.ReserveService;
 import concert.domain.reservation.Reservation;
-import concert.domain.reservation.ReservationStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.time.LocalDateTime;
 
 @RequestMapping("/v1/api/reservation")
 @RestController
 @RequiredArgsConstructor
 public class ReservationController {
 
-    private final ReserveService reserveService;
+    private final Reserve reserve;
 
     @PostMapping("/{userId}")
-    public ResponseEntity<ReservationResponse> reservation(@PathVariable("userId") long userId, @RequestParam("seatId") long seatId) {
+    public ResponseEntity<ReservationResponse> reservation(@PathVariable("userId") long userId,
+                                                           @RequestBody ReservationRequest request) throws Exception {
 
-        Reservation reservation = reserveService.reserve(
+        Reservation reservation = reserve.reserve(
                 ReserveCommand.builder()
                         .userId(userId)
-                        .seatId(seatId)
+                        .seatId(request.getSeatId())
                         .build()
         );
 

@@ -2,14 +2,20 @@ package concert.domain.balance.service;
 
 import concert.domain.balance.Balance;
 import concert.domain.balance.BalanceRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
 import org.springframework.stereotype.Service;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class BalanceService {
 
     private final BalanceRepository repository;
+
+    private final RedissonClient redissonClient;
 
     public Balance getBalance(BalanceInfo info) throws Exception {
 
@@ -19,9 +25,11 @@ public class BalanceService {
         return balance;
     }
 
+    @Transactional
     public Balance useBalance(BalanceInfo info) throws Exception {
 
         Balance balance = getBalance(info);
+        log.info("[BalanceService.useBalance] : " + balance.getBalance());
         balance.use(info.getAmount());
 
         balance = Balance.builder()
@@ -31,6 +39,8 @@ public class BalanceService {
                 .build();
 
         repository.update(balance);
+
+        log.info("[BalanceService.useBalance] : " + balance.getBalance());
 
         return balance;
     }
@@ -48,6 +58,49 @@ public class BalanceService {
 
         repository.update(balance);
 
+        log.info("[BalanceService.useBalance] : " + balance.getBalance());
+
         return balance;
     }
+
+//    public Balance chargeBalanceWithRedisson(BalanceInfo info) throws Exception {
+//
+//        String lockName = "useBalanceLock:" + info.getUserId();
+//        RLock lock = redissonClient.getLock(lockName);
+//
+//        try {
+//
+//            boolean isLocked = lock.tryLock(10, 30, TimeUnit.SECONDS);
+//
+//            if (isLocked) {
+//                try {
+//                    Balance balance = getBalance(info);
+//                    log.info("[BalanceService.chargeBalance] : " + balance.getBalance());
+//
+//                    balance.charge(info.getAmount());
+//
+//                    balance = Balance.builder()
+//                            .id(balance.getId())
+//                            .userId(balance.getUserId())
+//                            .balance(balance.getBalance())
+//                            .build();
+//
+//                    repository.update(balance);
+//
+//                    log.info("[BalanceService.chargeBalance] : " + balance.getBalance());
+//
+//                    return balance;
+//                } finally {
+//
+//                    lock.unlock();
+//                }
+//            } else {
+//
+//                throw new Exception("다른 프로세스가 락을 보유하고 있습니다.");
+//            }
+//        } catch (InterruptedException e) {
+//            Thread.currentThread().interrupt();
+//            throw new Exception("락 획득 중 오류 발생", e);
+//        }
+//    }
 }

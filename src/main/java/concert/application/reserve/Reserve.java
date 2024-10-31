@@ -1,5 +1,6 @@
 package concert.application.reserve;
 
+import concert.aop.RedisLock;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
 import concert.domain.reservation.ReservationStatus;
@@ -17,8 +18,9 @@ public class Reserve {
     private final ReservationRepository reservationRepository;
     private final SeatService seatService;
 
+    @RedisLock(key = "'seat.' + #command.seatId")
     @Transactional
-    public Reservation reserve(ReserveCommand command) throws Exception {
+    public Reservation reserveWithRedisson(ReserveCommand command) throws Exception {
 
         SeatStatus seatStatus = seatService.getSeat(
                 SeatInfo.builder()
@@ -37,7 +39,7 @@ public class Reserve {
                         .build()
         ).getPrice();
 
-        Reservation reservation = reservationRepository.reserve(
+        Reservation reservation = reservationRepository.create(
                 Reservation.builder()
                         .userId(command.getUserId())
                         .seatId(command.getSeatId())

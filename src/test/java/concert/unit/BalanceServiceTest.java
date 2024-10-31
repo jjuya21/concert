@@ -20,54 +20,54 @@ import static org.mockito.BDDMockito.given;
 @ExtendWith(MockitoExtension.class)
 public class BalanceServiceTest {
 
+    private final long DEFAULT_BALANCE_ID = 1L;
+    private final long DEFAULT_BALANCE_USER_ID = 1L;
+    private final long DEFAULT_BALANCE = 80000L;
+    private final Balance DEFAULT_SAVED_BALANCE = Balance.builder()
+            .id(DEFAULT_BALANCE_ID)
+            .userId(DEFAULT_BALANCE_USER_ID)
+            .balance(DEFAULT_BALANCE)
+            .build();
+
     @Mock
     private BalanceRepository balanceRepository;
-
     @InjectMocks
     private BalanceService balanceService;
 
     @Test
     void getBalance() throws Exception {
         // given
-        Balance savedBalance = Balance.builder()
-                .userId(1L)
-                .balance(80000L)
-                .build();
-
         BalanceInfo info = BalanceInfo.builder()
-                .userId(savedBalance.getUserId())
+                .userId(DEFAULT_BALANCE_USER_ID)
                 .build();
 
-        given(balanceRepository.getBalance(savedBalance.getUserId())).willReturn(Optional.of(savedBalance));
+        given(balanceRepository.getBalance(DEFAULT_BALANCE_USER_ID)).willReturn(Optional.of(DEFAULT_SAVED_BALANCE));
 
         // when
         Balance result = balanceService.getBalance(info);
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getUserId()).isEqualTo(1L);
-        assertThat(result.getBalance()).isEqualTo(80000L);
+        assertThat(result.getUserId()).isEqualTo(DEFAULT_BALANCE_USER_ID);
+        assertThat(result.getBalance()).isEqualTo(DEFAULT_BALANCE);
     }
 
     @Test
     void useBalance() throws Exception {
         // given
-        Balance savedBalance = Balance.builder()
-                .userId(1L)
-                .balance(80000L)
-                .build();
-
+        long useBalance = 10000L;
         Balance updateBalance = Balance.builder()
-                .userId(1L)
-                .balance(70000L)
+                .id(DEFAULT_BALANCE_ID)
+                .userId(DEFAULT_BALANCE_USER_ID)
+                .balance(DEFAULT_BALANCE - useBalance)
                 .build();
 
         BalanceInfo info = BalanceInfo.builder()
-                .userId(savedBalance.getUserId())
-                .amount(10000L)
+                .userId(DEFAULT_BALANCE_USER_ID)
+                .amount(useBalance)
                 .build();
 
-        given(balanceService.getBalance(info)).willReturn(savedBalance);
+        given(balanceRepository.getBalance(DEFAULT_BALANCE_USER_ID)).willReturn(Optional.of(DEFAULT_SAVED_BALANCE));
         given(balanceRepository.update(any(Balance.class))).willReturn(updateBalance);
 
         // when
@@ -80,66 +80,38 @@ public class BalanceServiceTest {
     }
 
     @Test
-    void useBalanceWith1Exception() throws Exception {
+    void useBalanceWithException() throws Exception {
         // given
-        Balance savedBalance = Balance.builder()
-                .userId(1L)
-                .balance(5000L)
-                .build();
-
+        long useBalance = DEFAULT_BALANCE + 1L;
         BalanceInfo info = BalanceInfo.builder()
-                .userId(savedBalance.getUserId())
-                .amount(-100L)
+                .userId(DEFAULT_BALANCE_USER_ID)
+                .amount(useBalance)
                 .build();
 
-        given(balanceService.getBalance(info)).willReturn(savedBalance);
+        given(balanceRepository.getBalance(DEFAULT_BALANCE_USER_ID)).willReturn(Optional.of(DEFAULT_SAVED_BALANCE));
 
         // when & then
         assertThatThrownBy(() -> balanceService.useBalance(info))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Use amount must be greater than zero.");
-    }
-
-    @Test
-    void useBalanceWith2Exception() throws Exception {
-        // given
-        Balance savedBalance = Balance.builder()
-                .userId(1L)
-                .balance(5000L)
-                .build();
-
-        BalanceInfo info = BalanceInfo.builder()
-                .userId(savedBalance.getUserId())
-                .amount(10000L)
-                .build();
-
-        given(balanceService.getBalance(info)).willReturn(savedBalance);
-
-        // when & then
-        assertThatThrownBy(() -> balanceService.useBalance(info))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Use amount must be less than balance.");
+                .isInstanceOf(Exception.class)
+                .hasMessage("잔액이 부족합니다.");
     }
 
     @Test
     void chargeBalance() throws Exception {
         // given
-        Balance savedBalance = Balance.builder()
-                .userId(1L)
-                .balance(80000L)
-                .build();
-
+        long chargeBalance = 10000L;
         Balance updateBalance = Balance.builder()
-                .userId(1L)
-                .balance(90000L)
+                .id(DEFAULT_BALANCE_ID)
+                .userId(DEFAULT_BALANCE_USER_ID)
+                .balance(DEFAULT_BALANCE + chargeBalance)
                 .build();
 
         BalanceInfo info = BalanceInfo.builder()
-                .userId(savedBalance.getUserId())
-                .amount(10000L)
+                .userId(DEFAULT_BALANCE_USER_ID)
+                .amount(chargeBalance)
                 .build();
 
-        given(balanceService.getBalance(info)).willReturn(savedBalance);
+        given(balanceRepository.getBalance(DEFAULT_BALANCE_USER_ID)).willReturn(Optional.of(DEFAULT_SAVED_BALANCE));
         given(balanceRepository.update(any(Balance.class))).willReturn(updateBalance);
 
         // when
@@ -147,28 +119,23 @@ public class BalanceServiceTest {
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result.getUserId()).isEqualTo(1L);
-        assertThat(result.getBalance()).isEqualTo(90000L);
+        assertThat(result.getUserId()).isEqualTo(DEFAULT_BALANCE_USER_ID);
+        assertThat(result.getBalance()).isEqualTo(DEFAULT_BALANCE + chargeBalance);
     }
 
     @Test
     void chargeBalanceWithException() throws Exception {
         // given
-        Balance savedBalance = Balance.builder()
-                .userId(1L)
-                .balance(5000L)
-                .build();
-
         BalanceInfo info = BalanceInfo.builder()
-                .userId(savedBalance.getUserId())
-                .amount(0L)
+                .userId(DEFAULT_BALANCE_USER_ID)
+                .amount(-1L)
                 .build();
 
-        given(balanceService.getBalance(info)).willReturn(savedBalance);
+        given(balanceRepository.getBalance(DEFAULT_BALANCE_USER_ID)).willReturn(Optional.of(DEFAULT_SAVED_BALANCE));
 
         // when & then
         assertThatThrownBy(() -> balanceService.chargeBalance(info))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Charge amount must be greater than zero.");
+                .isInstanceOf(Exception.class)
+                .hasMessage("충전 금액은 음수일 수 없습니다.");
     }
 }

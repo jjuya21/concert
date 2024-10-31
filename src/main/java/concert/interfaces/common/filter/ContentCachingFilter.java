@@ -1,4 +1,4 @@
-package concert.filter;
+package concert.interfaces.common.filter;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.servlet.FilterRegistrationBean;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.util.ContentCachingRequestWrapper;
@@ -31,7 +30,6 @@ public class ContentCachingFilter extends OncePerRequestFilter {
         }
     }
 
-    @Bean
     public FilterRegistrationBean<ContentCachingFilter> contentCachingFilter() {
         FilterRegistrationBean<ContentCachingFilter> registrationBean = new FilterRegistrationBean<>();
 

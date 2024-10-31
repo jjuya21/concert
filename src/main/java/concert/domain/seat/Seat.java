@@ -37,6 +37,10 @@ public class Seat {
     @Column(name = "hold_expiry_time")
     private LocalDateTime holdExpiryTime;
 
+//    @Version
+//    @Builder.Default
+//    private Integer version = 0;
+
     public void setStatus(SeatStatus status) {
         this.status = status;
     }

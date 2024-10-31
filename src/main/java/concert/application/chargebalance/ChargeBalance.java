@@ -25,4 +25,18 @@ public class ChargeBalance {
 
         return balance;
     }
+
+//    @RedisLock(key = "'balance.' + #command.userId")
+//    @Transactional
+//    public Balance chargeBalanceWithRedisson(ChargeBalanceCommand command) throws Exception {
+//
+//        Balance balance = balanceService.chargeBalance(
+//                BalanceInfo.builder()
+//                        .userId(command.getUserId())
+//                        .amount(command.getAmount())
+//                        .build()
+//        );
+//
+//        return balance;
+//    }
 }

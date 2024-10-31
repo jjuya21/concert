@@ -7,4 +7,6 @@ public interface BalanceRepository {
     Optional<Balance> getBalance(long userId);
 
     Balance update(Balance balance);
+
+    Balance save(Balance balance);
 }

@@ -1,4 +1,4 @@
-package concert.interceptor;
+package concert.interfaces.common.interceptor;
 
 import concert.domain.queuetoken.QueueToken;
 import concert.domain.queuetoken.service.QueueTokenInfo;

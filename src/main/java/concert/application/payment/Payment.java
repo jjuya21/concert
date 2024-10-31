@@ -1,5 +1,6 @@
 package concert.application.payment;
 
+import concert.aop.RedisLock;
 import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
 import concert.domain.payment.PaymentRepository;
@@ -43,7 +44,48 @@ public class Payment {
         );
 
         reservation.setStatus(ReservationStatus.PAYED);
-        reservationRepository.updateReservation(reservation);
+        reservationRepository.update(reservation);
+
+        seatService.updateStatus(
+                SeatInfo.builder()
+                        .seatId(reservation.getSeatId())
+                        .status(SeatStatus.RESERVED)
+                        .build()
+        );
+
+        concert.domain.payment.Payment payment = paymentRepository.create(
+                concert.domain.payment.Payment.builder()
+                        .userId(command.getUserId())
+                        .reservationId(command.getReservationId())
+                        .status(PaymentStatus.PAYED)
+                        .createdAt(LocalDateTime.now())
+                        .build()
+        );
+
+        queueTokenRepository.expiry(queueTokenService.getQueueToken(
+                QueueTokenInfo.builder()
+                        .token(command.getToken())
+                        .build()
+        ));
+
+        return payment;
+    }
+
+    @RedisLock(key = "'balance.' + #command.userId")
+    @Transactional
+    public concert.domain.payment.Payment paymentWithRedisson(PaymentCommand command) throws Exception {
+
+        Reservation reservation = reservationRepository.getReservation(command.getReservationId()).get();
+
+        balanceService.useBalance(
+                BalanceInfo.builder()
+                        .userId(command.getUserId())
+                        .amount(reservation.getPrice())
+                        .build()
+        );
+
+        reservation.setStatus(ReservationStatus.PAYED);
+        reservationRepository.update(reservation);
 
         seatService.updateStatus(
                 SeatInfo.builder()

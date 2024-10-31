@@ -12,7 +12,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.concurrent.CountDownLatch;
@@ -27,8 +26,6 @@ class ReserveTest {
     private final long PRICE = 80000L;
     @Autowired
     ReservationRepository reservationRepository;
-    @Value("${custom.token}")
-    private String token;
     @Autowired
     private Reserve reserve;
     @Autowired
@@ -51,7 +48,7 @@ class ReserveTest {
                 .build();
 
         // when
-        Reservation result = reserve.reserve(command);
+        Reservation result = reserve.reserveWithRedisson(command);
 
         // then
         Reservation reservation = reservationRepository.getReservation(result.getId()).get();
@@ -64,7 +61,7 @@ class ReserveTest {
         // given
         Seat createdSeat = createSeat(SEAT_NO, CONCERT_ITEM_ID, PRICE);
 
-        int threadCount = 5;
+        int threadCount = 1000;
 
         ReserveCommand command = ReserveCommand.builder()
                 .seatId(createdSeat.getId())
@@ -75,12 +72,12 @@ class ReserveTest {
         ExecutorService executor = Executors.newFixedThreadPool(threadCount);
         CountDownLatch latch = new CountDownLatch(threadCount);
 
-        Reservation result = reserve.reserve(command);
+        Reservation result = reserve.reserveWithRedisson(command);
 
         for (int i = 1; i <= threadCount; i++) {
             executor.execute(() -> {
                 try {
-                    reserve.reserve(command);
+                    reserve.reserveWithRedisson(command);
                 } catch (Exception ignored) {
 
                 } finally {
@@ -88,6 +85,8 @@ class ReserveTest {
                 }
             });
         }
+        latch.await();
+        executor.shutdown();
 
         // then
         Reservation reservation = reservationRepository.getReservation(result.getId()).get();

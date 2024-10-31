@@ -22,4 +22,9 @@ public class BalanceRepositoryImpl implements BalanceRepository {
     public Balance update(Balance balance) {
         return jpaRepository.save(balance);
     }
+
+    @Override
+    public Balance save(Balance balance) {
+        return jpaRepository.save(balance);
+    }
 }

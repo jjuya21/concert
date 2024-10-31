@@ -24,7 +24,12 @@ import static org.mockito.BDDMockito.given;
 public class QueueTokenServiceTest {
 
     @Value("${custom.token}")
-    private String token;
+    private String DEFAULT_TOKEN;
+    private final QueueToken DEFAULT_SAVED_TOKEN = QueueToken.builder()
+            .id(1L)
+            .token(DEFAULT_TOKEN)
+            .status(TokenStatus.WAIT)
+            .build();
     @Mock
     private QueueTokenRepository queueTokenRepository;
     @InjectMocks
@@ -33,44 +38,34 @@ public class QueueTokenServiceTest {
     @Test
     void getQueueTokenTest() throws Exception {
         // given
-        QueueToken queueToken = QueueToken.builder()
-                .token(token)
-                .build();
-
-        given(queueTokenRepository.getByToken(token)).willReturn(Optional.ofNullable(queueToken));
+        given(queueTokenRepository.getByToken(DEFAULT_TOKEN)).willReturn(Optional.ofNullable(DEFAULT_SAVED_TOKEN));
 
         // when
-        QueueToken result = queueTokenService.getQueueToken(QueueTokenInfo.builder().token(token).build());
+        QueueToken result = queueTokenService.getQueueToken(QueueTokenInfo.builder().token(DEFAULT_TOKEN).build());
 
         // then
         assertThat(result).isNotNull();
-        assertThat(result).isEqualTo(queueToken);
+        assertThat(result.getToken()).isEqualTo(DEFAULT_TOKEN);
     }
 
     @Test
     void updateStatusTest() throws Exception {
         // given
-        QueueToken savedQueueToken = QueueToken.builder()
-                .id(1L)
-                .token(token)
-                .status(TokenStatus.WAIT)
-                .build();
-
         QueueToken updateQueueToken = QueueToken.builder()
                 .id(1L)
-                .token(token)
+                .token(DEFAULT_TOKEN)
                 .status(TokenStatus.PROCESSED)
                 .build();
 
-        QueueTokenInfo info = QueueTokenInfo.builder().token(token).build();
+        QueueTokenInfo info = QueueTokenInfo.builder().token(DEFAULT_TOKEN).build();
 
-        given(queueTokenService.getQueueToken(info)).willReturn(savedQueueToken);
+        given(queueTokenRepository.getByToken(DEFAULT_TOKEN)).willReturn(Optional.ofNullable(DEFAULT_SAVED_TOKEN));
         given(queueTokenRepository.update(any(QueueToken.class))).willReturn(updateQueueToken);
 
         // when
         QueueToken result = queueTokenService.updateStatus(
                 QueueTokenInfo.builder()
-                        .token(token)
+                        .token(DEFAULT_TOKEN)
                         .status(TokenStatus.PROCESSED)
                         .build()
         );
@@ -87,29 +82,22 @@ public class QueueTokenServiceTest {
         // given
         LocalDateTime updateExpiryTime = LocalDateTime.now().plusMinutes(30);
 
-        QueueToken savedQueueToken = QueueToken.builder()
-                .id(1L)
-                .token(token)
-                .status(TokenStatus.WAIT)
-                .expiryTime(LocalDateTime.now())
-                .build();
-
         QueueToken updateQueueToken = QueueToken.builder()
                 .id(1L)
-                .token(token)
+                .token(DEFAULT_TOKEN)
                 .status(TokenStatus.WAIT)
                 .expiryTime(updateExpiryTime)
                 .build();
 
-        QueueTokenInfo info = QueueTokenInfo.builder().token(token).build();
+        QueueTokenInfo info = QueueTokenInfo.builder().token(DEFAULT_TOKEN).build();
 
-        given(queueTokenService.getQueueToken(info)).willReturn(savedQueueToken);
+        given(queueTokenRepository.getByToken(DEFAULT_TOKEN)).willReturn(Optional.ofNullable(DEFAULT_SAVED_TOKEN));
         given(queueTokenRepository.update(any(QueueToken.class))).willReturn(updateQueueToken);
 
         // when
         QueueToken result = queueTokenService.updateExpiryTime(
                 QueueTokenInfo.builder()
-                        .token(token)
+                        .token(DEFAULT_TOKEN)
                         .status(TokenStatus.WAIT)
                         .expiryTime(updateExpiryTime)
                         .build()
@@ -124,24 +112,19 @@ public class QueueTokenServiceTest {
     @Test
     void createQueuePositionTest() throws Exception {
         // given
-        QueueToken savedQueueToken = QueueToken.builder()
-                .id(1L)
-                .token(token)
-                .build();
-
         QueueToken updateQueueToken = QueueToken.builder()
                 .id(1L)
-                .token(token)
+                .token(DEFAULT_TOKEN)
                 .queuePosition(1L)
                 .build();
 
-        List<QueueToken> savedQueueTokens = List.of(savedQueueToken);
+        List<QueueToken> savedQueueTokens = List.of(DEFAULT_SAVED_TOKEN);
 
         QueueTokenInfo info = QueueTokenInfo.builder()
-                .token(token)
+                .token(DEFAULT_TOKEN)
                 .build();
 
-        given(queueTokenService.getQueueToken(info)).willReturn(savedQueueToken);
+        given(queueTokenRepository.getByToken(DEFAULT_TOKEN)).willReturn(Optional.of(DEFAULT_SAVED_TOKEN));
         given(queueTokenRepository.getAll()).willReturn(savedQueueTokens);
         given(queueTokenRepository.update(any(QueueToken.class))).willReturn(updateQueueToken);
 
@@ -157,13 +140,19 @@ public class QueueTokenServiceTest {
     @Test
     void getProcessedTokensTest() {
         // given
-        QueueToken savedQueueToken = QueueToken.builder()
+        QueueToken token_1 = QueueToken.builder()
                 .id(1L)
-                .token(token)
+                .token(DEFAULT_TOKEN)
                 .status(TokenStatus.PROCESSED)
                 .build();
 
-        List<QueueToken> savedQueueTokens = List.of(savedQueueToken, savedQueueToken);
+        QueueToken token_2 = QueueToken.builder()
+                .id(1L)
+                .token(DEFAULT_TOKEN)
+                .status(TokenStatus.PROCESSED)
+                .build();
+
+        List<QueueToken> savedQueueTokens = List.of(token_1, token_2);
 
         given(queueTokenRepository.getAll()).willReturn(savedQueueTokens);
 

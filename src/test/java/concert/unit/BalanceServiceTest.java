@@ -4,6 +4,7 @@ import concert.domain.balance.Balance;
 import concert.domain.balance.BalanceRepository;
 import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -34,6 +35,7 @@ public class BalanceServiceTest {
     @InjectMocks
     private BalanceService balanceService;
 
+    @DisplayName("userID에 맞는 잔액 정보가 조회되어야한다")
     @Test
     void getBalance() throws Exception {
         // given
@@ -52,6 +54,7 @@ public class BalanceServiceTest {
         assertThat(result.getBalance()).isEqualTo(DEFAULT_BALANCE);
     }
 
+    @DisplayName("기존 잔액에 amount 만큼 사용이 되어야한다")
     @Test
     void useBalance() throws Exception {
         // given
@@ -79,6 +82,7 @@ public class BalanceServiceTest {
         assertThat(result.getBalance()).isEqualTo(70000L);
     }
 
+    @DisplayName("현재 잔액보다 더 큰 amount로 요청이 들어오면 실패해야한다")
     @Test
     void useBalanceWithException() throws Exception {
         // given
@@ -96,6 +100,7 @@ public class BalanceServiceTest {
                 .hasMessage("잔액이 부족합니다.");
     }
 
+    @DisplayName("기존 잔액에 amount 만큼 충전이 되어야한다")
     @Test
     void chargeBalance() throws Exception {
         // given
@@ -123,6 +128,7 @@ public class BalanceServiceTest {
         assertThat(result.getBalance()).isEqualTo(DEFAULT_BALANCE + chargeBalance);
     }
 
+    @DisplayName("음수로 충전 요청이 들어오면 실패해야한다")
     @Test
     void chargeBalanceWithException() throws Exception {
         // given

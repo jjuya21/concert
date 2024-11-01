@@ -20,7 +20,7 @@ class CreateQueueTokenTest {
     @Autowired
     private QueueTokenService queueTokenService;
 
-    @DisplayName("토큰을 생성하면 db에 저장되있어야한다.")
+    @DisplayName("토큰을 생성하면 성공적으로 생성되어야한다")
     @Test
     @Transactional
     public void createQueueTokenTest() throws Exception {

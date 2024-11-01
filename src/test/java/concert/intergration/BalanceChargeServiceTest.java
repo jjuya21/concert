@@ -61,6 +61,7 @@ class BalanceChargeServiceTest {
         assertThat(updatedBalance.getBalance()).isEqualTo(DEFAULT_BALANCE + DEFAULT_AMOUNT);
     }
 
+    @DisplayName("동시에 여러 충전 요청이 들어오면 첫번째 요청이외에는 실패한다.")
     @Test
     void chargeConcurrencyTest() throws Exception {
         // given

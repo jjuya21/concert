@@ -55,7 +55,7 @@ class ReserveTest {
         Assertions.assertThat(reservation.getSeatId()).isEqualTo(result.getSeatId());
     }
 
-    @DisplayName("예매가 되기 전에 좌석의 상태가 바뀌어 다음 요청은 실행되지 않아야한다.")
+    @DisplayName("동시에 예매요청이 들어오면 첫번째 요청 후에 좌석의 상태가 바뀌어 다음 요청은 실패해야한다.")
     @Test
     void reserveConcurrencyTest() throws Exception {
         // given

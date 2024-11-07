@@ -1,5 +1,6 @@
 package concert.application.createtoken;
 
+import concert.aop.RedisLock;
 import concert.domain.queuetoken.QueueToken;
 import concert.domain.queuetoken.QueueTokenRepository;
 import concert.domain.queuetoken.TokenStatus;
@@ -23,6 +24,7 @@ public class CreateToken {
     @Value("${custom.queue.max-capacity}")
     private long maxQueuePassCapacity;
 
+    @RedisLock(key = "token")
     @Transactional
     public QueueToken createToken() throws Exception {
 

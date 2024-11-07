@@ -5,6 +5,7 @@ import concert.domain.seat.SeatRepository;
 import concert.domain.seat.SeatStatus;
 import concert.domain.seat.service.SeatInfo;
 import concert.domain.seat.service.SeatService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,6 +39,7 @@ class SeatServiceTest {
     @InjectMocks
     private SeatService seatService;
 
+    @DisplayName("seatID로 좌석 정보를 조회할 수 있어야한다.")
     @Test
     void getSeat() throws Exception {
         // given
@@ -55,6 +57,7 @@ class SeatServiceTest {
         assertThat(result.getId()).isEqualTo(DEFAULT_ID);
     }
 
+    @DisplayName("좌석의 상태값을 수정하면 성공적으로 수정되어야한")
     @Test
     void updateStatusTest() throws Exception {
         // given

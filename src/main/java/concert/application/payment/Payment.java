@@ -1,12 +1,10 @@
 package concert.application.payment;
 
-import concert.aop.RedisLock;
 import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
 import concert.domain.payment.PaymentRepository;
 import concert.domain.payment.PaymentStatus;
-import concert.domain.queuetoken.QueueTokenRepository;
-import concert.domain.queuetoken.service.QueueTokenInfo;
+import concert.domain.queuetoken.QueueTokenRedisRepository;
 import concert.domain.queuetoken.service.QueueTokenService;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
@@ -27,7 +25,7 @@ public class Payment {
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
     private final BalanceService balanceService;
-    private final QueueTokenRepository queueTokenRepository;
+    private final QueueTokenRedisRepository queueTokenRedisRepository;
     private final QueueTokenService queueTokenService;
     private final SeatService seatService;
 
@@ -62,52 +60,7 @@ public class Payment {
                         .build()
         );
 
-        queueTokenRepository.expiry(queueTokenService.getQueueToken(
-                QueueTokenInfo.builder()
-                        .token(command.getToken())
-                        .build()
-        ));
-
-        return payment;
-    }
-
-    @RedisLock(key = "'balance.' + #command.userId")
-    @Transactional
-    public concert.domain.payment.Payment paymentWithRedisson(PaymentCommand command) throws Exception {
-
-        Reservation reservation = reservationRepository.getReservation(command.getReservationId()).get();
-
-        balanceService.useBalance(
-                BalanceInfo.builder()
-                        .userId(command.getUserId())
-                        .amount(reservation.getPrice())
-                        .build()
-        );
-
-        reservation.setStatus(ReservationStatus.PAYED);
-        reservationRepository.update(reservation);
-
-        seatService.updateStatus(
-                SeatInfo.builder()
-                        .seatId(reservation.getSeatId())
-                        .status(SeatStatus.RESERVED)
-                        .build()
-        );
-
-        concert.domain.payment.Payment payment = paymentRepository.create(
-                concert.domain.payment.Payment.builder()
-                        .userId(command.getUserId())
-                        .reservationId(command.getReservationId())
-                        .status(PaymentStatus.PAYED)
-                        .createdAt(LocalDateTime.now())
-                        .build()
-        );
-
-        queueTokenRepository.expiry(queueTokenService.getQueueToken(
-                QueueTokenInfo.builder()
-                        .token(command.getToken())
-                        .build()
-        ));
+        queueTokenRedisRepository.deleteActiveToken(command.getToken());
 
         return payment;
     }

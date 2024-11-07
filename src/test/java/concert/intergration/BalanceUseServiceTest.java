@@ -1,6 +1,6 @@
 package concert.intergration;
 
-import concert.application.chargebalance.ChargeBalance;
+import concert.application.chargebalance.ChargeBalanceService;
 import concert.domain.balance.Balance;
 import concert.domain.balance.BalanceRepository;
 import concert.domain.balance.service.BalanceInfo;
@@ -25,15 +25,15 @@ public class BalanceUseServiceTest {
     private final long DEFAULT_AMOUNT = 200L;
     private final long DEFAULT_BALANCE = 800000L;
     @Autowired
-    private ChargeBalance chargeBalance;
+    private ChargeBalanceService chargeBalanceService;
     @Autowired
     private BalanceService balanceService;
     @Autowired
     private BalanceRepository balanceRepository;
 
     @BeforeEach
-    void setUp() throws Exception {
-        // createBalance();
+    void setUp() {
+        createBalance();
     }
 
     @DisplayName("잔액 충전을 하면 amount만큼 금액이 충전되있어야한다")
@@ -57,10 +57,10 @@ public class BalanceUseServiceTest {
         assertThat(updatedBalance.getBalance()).isEqualTo(DEFAULT_BALANCE - DEFAULT_AMOUNT);
     }
 
+    @DisplayName("동시에 여러 결제 요청이 들어오면 첫번째 요청이외에는 실패한다.")
     @Test
     void useConcurrencyTest() throws Exception {
         // given
-        createBalance();
         int threadCount = 1000;
 
         BalanceInfo info = new BalanceInfo(DEFAULT_USER_ID, DEFAULT_AMOUNT);

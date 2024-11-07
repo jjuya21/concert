@@ -5,6 +5,7 @@ import concert.domain.queuetoken.QueueTokenRepository;
 import concert.domain.queuetoken.TokenStatus;
 import concert.domain.queuetoken.service.QueueTokenInfo;
 import concert.domain.queuetoken.service.QueueTokenService;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -35,6 +36,7 @@ public class QueueTokenServiceTest {
     @InjectMocks
     private QueueTokenService queueTokenService;
 
+    @DisplayName("token에 맞는 토큰 정보가 조회되어야한다")
     @Test
     void getQueueTokenTest() throws Exception {
         // given
@@ -48,6 +50,7 @@ public class QueueTokenServiceTest {
         assertThat(result.getToken()).isEqualTo(DEFAULT_TOKEN);
     }
 
+    @DisplayName("토큰의 상태값을 원하는 값으로 수정할 수 있어야한다")
     @Test
     void updateStatusTest() throws Exception {
         // given
@@ -77,6 +80,7 @@ public class QueueTokenServiceTest {
     }
 
 
+    @DisplayName("토큰의 만료시간을 원하는 시간으로 수정이 성공되야한다.")
     @Test
     void updateExpiryTimeTest() throws Exception {
         // given
@@ -109,6 +113,7 @@ public class QueueTokenServiceTest {
         assertThat(result.getExpiryTime()).isEqualTo(updateExpiryTime);
     }
 
+    @DisplayName("토큰값과 대기 순번이 옳게 생성이 되어야한다.")
     @Test
     void createQueuePositionTest() throws Exception {
         // given
@@ -137,6 +142,7 @@ public class QueueTokenServiceTest {
         assertThat(result.getQueuePosition()).isEqualTo(updateQueueToken.getQueuePosition());
     }
 
+    @DisplayName("상태값이 PROCESSED인 토큰들을 조회하면 성공해야한다")
     @Test
     void getProcessedTokensTest() {
         // given

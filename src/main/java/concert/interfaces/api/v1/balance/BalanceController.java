@@ -1,8 +1,8 @@
 package concert.interfaces.api.v1.balance;
 
 
-import concert.application.chargebalance.ChargeBalance;
 import concert.application.chargebalance.ChargeBalanceCommand;
+import concert.application.chargebalance.ChargeBalanceService;
 import concert.domain.balance.Balance;
 import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 public class BalanceController {
 
     private final BalanceService balanceService;
-    private final ChargeBalance chargeBalance;
+    private final ChargeBalanceService chargeBalanceService;
 
     @GetMapping("/{userId}")
     public ResponseEntity<BalanceResponse> getBalance(@PathVariable("userId") long userId) throws Exception {
@@ -35,7 +35,7 @@ public class BalanceController {
     public ResponseEntity<BalanceResponse> chargeBalance(@PathVariable("userId") long userId,
                                                          @RequestBody BalanceRequest request) throws Exception {
 
-        Balance balance = chargeBalance.chargeBalance(
+        Balance balance = chargeBalanceService.chargeBalance(
                 ChargeBalanceCommand.builder()
                         .userId(userId)
                         .amount(request.getAmount())

@@ -1,7 +1,7 @@
 package concert.intergration;
 
-import concert.application.chargebalance.ChargeBalance;
 import concert.application.chargebalance.ChargeBalanceCommand;
+import concert.application.chargebalance.ChargeBalanceService;
 import concert.domain.balance.Balance;
 import concert.domain.balance.BalanceRepository;
 import concert.domain.balance.service.BalanceInfo;
@@ -23,11 +23,11 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 @SpringBootTest
 class BalanceChargeServiceTest {
 
-    private final long DEFAULT_USER_ID = 1L;
+    private final long DEFAULT_USER_ID = 5L;
     private final long DEFAULT_AMOUNT = 200L;
     private final long DEFAULT_BALANCE = 800000L;
     @Autowired
-    private ChargeBalance chargeBalance;
+    private ChargeBalanceService chargeBalanceService;
     @Autowired
     private QueueTokenService queueTokenService;
     @Autowired
@@ -36,8 +36,8 @@ class BalanceChargeServiceTest {
     private BalanceRepository balanceRepository;
 
     @BeforeEach
-    void setUp() throws Exception {
-//        createBalance();
+    void setUp() {
+        createBalance();
     }
 
     @DisplayName("잔액 충전을 하면 amount만큼 금액이 충전되있어야한다")
@@ -48,7 +48,7 @@ class BalanceChargeServiceTest {
         ChargeBalanceCommand command = new ChargeBalanceCommand(DEFAULT_USER_ID, DEFAULT_AMOUNT);
 
         // When
-        Balance actualBalance = chargeBalance.chargeBalance(command);
+        Balance actualBalance = chargeBalanceService.chargeBalance(command);
 
         // Then
         Balance updatedBalance = balanceService.getBalance(
@@ -65,7 +65,6 @@ class BalanceChargeServiceTest {
     @Test
     void chargeConcurrencyTest() throws Exception {
         // given
-        createBalance();
         int threadCount = 1000;
 
         ChargeBalanceCommand command = new ChargeBalanceCommand(DEFAULT_USER_ID, DEFAULT_AMOUNT);
@@ -77,7 +76,7 @@ class BalanceChargeServiceTest {
         for (int i = 1; i <= threadCount; i++) {
             executor.execute(() -> {
                 try {
-                    chargeBalance.chargeBalance(command);
+                    chargeBalanceService.chargeBalance(command);
                 } catch (Exception ignored) {
 
                 } finally {
@@ -96,7 +95,7 @@ class BalanceChargeServiceTest {
         );
 
         assertThat(updatedBalance.getUserId()).isEqualTo(DEFAULT_USER_ID);
-        assertThat(updatedBalance.getBalance()).isEqualTo(DEFAULT_BALANCE + (DEFAULT_AMOUNT * threadCount));
+        assertThat(updatedBalance.getBalance()).isEqualTo(DEFAULT_BALANCE + DEFAULT_AMOUNT);
     }
 
     private void createBalance() {

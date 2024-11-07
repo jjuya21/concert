@@ -9,7 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class ChargeBalance {
+public class ChargeBalanceService {
 
     private final BalanceService balanceService;
 
@@ -25,18 +25,4 @@ public class ChargeBalance {
 
         return balance;
     }
-
-//    @RedisLock(key = "'balance.' + #command.userId")
-//    @Transactional
-//    public Balance chargeBalanceWithRedisson(ChargeBalanceCommand command) throws Exception {
-//
-//        Balance balance = balanceService.chargeBalance(
-//                BalanceInfo.builder()
-//                        .userId(command.getUserId())
-//                        .amount(command.getAmount())
-//                        .build()
-//        );
-//
-//        return balance;
-//    }
 }

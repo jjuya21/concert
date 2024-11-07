@@ -15,10 +15,9 @@ public class GetConcertDates {
     private final ConcertItemRepository concertItemRepository;
 
     @Transactional
-    public List<ConcertItem> getConcertDates(GetConcertDatesCommand command) throws Exception {
+    public List<ConcertItem> getConcertDates(GetConcertDatesCommand command) {
 
-        List<ConcertItem> concertItems = concertItemRepository.getByConcertId(command.getConcertId())
-                .orElseThrow(() -> new Exception("콘서트 날짜가 존재하지 않습니다."));
+        List<ConcertItem> concertItems = concertItemRepository.getByConcertId(command.getConcertId());
 
         return concertItems;
     }

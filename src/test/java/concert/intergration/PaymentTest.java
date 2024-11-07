@@ -39,7 +39,7 @@ class PaymentTest {
         PaymentCommand command = PaymentCommand.builder()
                 .token(token)
                 .reservationId(1)
-                .userId(1)
+                .userId(3L)
                 .build();
 
         // when
@@ -47,13 +47,13 @@ class PaymentTest {
 
         // given
         assertThat(result).isNotNull();
-        assertThat(result.getUserId()).isEqualTo(1);
+        assertThat(result.getUserId()).isEqualTo(3L);
     }
 
     private void createBalance() {
         balanceRepository.save(
                 Balance.builder()
-                        .userId(1L)
+                        .userId(3L)
                         .balance(80000L)
                         .build()
         );

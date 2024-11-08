@@ -14,17 +14,13 @@ public class GetQueuePosition {
     private final QueueTokenService queueTokenService;
 
     @Transactional
-    public long getQueuePosition(String token) throws Exception {
+    public QueueToken getQueuePosition(String token) throws Exception {
 
-        QueueToken queueToken = queueTokenService.getQueueToken(
+        QueueToken queuePosition = queueTokenService.getQueuePosition(
                 QueueTokenInfo.builder()
                         .token(token)
                         .build()
         );
-
-        long queuePosition = queueToken.getQueuePosition();
-
-        System.out.println(queuePosition);
 
         return queuePosition;
     }

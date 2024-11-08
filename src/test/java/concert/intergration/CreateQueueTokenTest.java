@@ -1,6 +1,6 @@
 package concert.intergration;
 
-import concert.application.createtoken.CreateToken;
+import concert.application.createtoken.CreateTokenService;
 import concert.domain.queuetoken.QueueToken;
 import concert.domain.queuetoken.service.QueueTokenInfo;
 import concert.domain.queuetoken.service.QueueTokenService;
@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 class CreateQueueTokenTest {
 
     @Autowired
-    private CreateToken createToken;
+    private CreateTokenService createTokenService;
 
     @Autowired
     private QueueTokenService queueTokenService;
@@ -25,10 +25,10 @@ class CreateQueueTokenTest {
     @Transactional
     public void createQueueTokenTest() throws Exception {
         // given
-        String token = createToken.createToken().getToken();
+        String token = createTokenService.createToken().getToken();
 
         // when
-        QueueToken queueToken = queueTokenService.getQueueToken(
+        QueueToken queueToken = queueTokenService.getQueuePosition(
                 QueueTokenInfo.builder()
                         .token(token)
                         .build()

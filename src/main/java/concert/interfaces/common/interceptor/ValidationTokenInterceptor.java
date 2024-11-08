@@ -1,8 +1,6 @@
 package concert.interfaces.common.interceptor;
 
-import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.service.QueueTokenInfo;
-import concert.domain.queuetoken.service.QueueTokenService;
+import concert.domain.queuetoken.QueueTokenRedisRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -16,7 +14,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 @RequiredArgsConstructor
 public class ValidationTokenInterceptor implements HandlerInterceptor {
 
-    private final QueueTokenService queueTokenService;
+    private final QueueTokenRedisRepository queueTokenRedisRepository;
 
     @Override
     @Transactional
@@ -33,16 +31,8 @@ public class ValidationTokenInterceptor implements HandlerInterceptor {
 
         log.info("Extracted Token: {}", token);
 
-        QueueToken queueToken = queueTokenService.getQueueToken(
-                QueueTokenInfo.builder()
-                        .token(token)
-                        .build()
-        );
-
-        if (queueToken.checkIsWait()) {
-
-            throw new Exception("대기열 대기중");
-        }
+        queueTokenRedisRepository.getActiveToken(token)
+                .orElseThrow(() -> new Exception("사용 불가한 토큰입니다"));
 
         return true;
     }

@@ -1,6 +1,6 @@
 package concert.interfaces.api.v1.queuetoken;
 
-import concert.application.createtoken.CreateToken;
+import concert.application.createtoken.CreateTokenService;
 import concert.application.getqueueposition.GetQueuePosition;
 import concert.domain.queuetoken.QueueToken;
 import jakarta.servlet.http.HttpServletRequest;
@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class QueueTokenController {
 
     private final GetQueuePosition getQueuePosition;
-    private final CreateToken queueTokenService;
+    private final CreateTokenService queueTokenService;
 
     @PostMapping
     public ResponseEntity<QueueTokenResponse> createToken() throws Exception {
@@ -38,9 +38,9 @@ public class QueueTokenController {
 
         String token = authorizationHeader.substring(7);
 
-        long queuePosition = getQueuePosition.getQueuePosition(token);
+        QueueToken queueToken = getQueuePosition.getQueuePosition(token);
         QueueTokenResponse response = new QueueTokenResponse(
-                token, queuePosition
+                token, queueToken.getQueuePosition()
         );
         return ResponseEntity.ok(response);
     }

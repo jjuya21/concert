@@ -1,91 +1,38 @@
 package concert.domain.queuetoken.service;
 
 import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.QueueTokenRepository;
-import concert.domain.queuetoken.TokenStatus;
+import concert.domain.queuetoken.QueueTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
 public class QueueTokenService {
 
-    private final QueueTokenRepository repository;
+    private final QueueTokenRedisRepository repository;
 
     public QueueToken getQueueToken(QueueTokenInfo info) throws Exception {
 
-        QueueToken queueToken = repository.getByToken(info.getToken())
+        String token = repository.getActiveToken(info.getToken())
                 .orElseThrow(() -> new Exception("토큰이 존재하지 않습니다."));
+        QueueToken queueToken = QueueToken.builder()
+                .token(token)
+                .build();
 
         return queueToken;
     }
 
-    public QueueToken updateStatus(QueueTokenInfo info) throws Exception {
+    public QueueToken getQueuePosition(QueueTokenInfo info) throws Exception {
+        long queuePosition = repository.getRank(info.getToken())
+                .orElseThrow(() -> new Exception("대기열에 존재하지 않는 토큰입니다"));
 
-        QueueToken queueToken = getQueueToken(info);
-        queueToken.setStatus(info.getStatus());
+        queuePosition++;
 
-        queueToken = repository.update(QueueToken.builder()
-                .id(queueToken.getId())
-                .token(queueToken.getToken())
-                .status(queueToken.getStatus())
-                .queuePosition(queueToken.getQueuePosition())
-                .expiryTime(queueToken.getExpiryTime())
-                .build()
-        );
-
-        return queueToken;
-    }
-
-    public QueueToken updateExpiryTime(QueueTokenInfo info) throws Exception {
-
-        QueueToken queueToken = getQueueToken(info);
-        queueToken.setExpiryTime(info.getExpiryTime());
-
-        queueToken = repository.update(QueueToken.builder()
-                .id(queueToken.getId())
-                .token(queueToken.getToken())
-                .queuePosition(queueToken.getQueuePosition())
-                .status(queueToken.getStatus())
-                .expiryTime(queueToken.getExpiryTime())
-                .build()
-        );
-
-        return queueToken;
-    }
-
-    public QueueToken createQueuePosition(QueueTokenInfo info) throws Exception {
-
-        QueueToken queueToken = getQueueToken(info);
-
-        long queuePosition = repository.getAll()
-                .stream()
-                .filter(token -> token.checkIsWait())
-                .max(Comparator.comparing(QueueToken::getQueuePosition))
-                .map(QueueToken::getQueuePosition)
-                .map(maxPosition -> maxPosition + 1L)
-                .orElse(1L);
-
-        queueToken = repository.update(QueueToken.builder()
-                .id(queueToken.getId())
-                .token(queueToken.getToken())
+        QueueToken queueToken = QueueToken.builder()
+                .token(info.getToken())
                 .queuePosition(queuePosition)
-                .status(queueToken.getStatus())
-                .expiryTime(queueToken.getExpiryTime())
-                .build()
-        );
+                .build();
 
         return queueToken;
-    }
-
-    public List<QueueToken> getProcessedTokens() {
-
-        List<QueueToken> tokens = repository.getAll().stream()
-                .filter(token -> token.getStatus() == TokenStatus.PROCESSED).toList();
-
-        return tokens;
     }
 }

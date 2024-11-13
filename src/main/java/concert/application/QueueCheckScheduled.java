@@ -1,17 +1,11 @@
 package concert.application;
 
-import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.QueueTokenRepository;
-import concert.domain.queuetoken.TokenStatus;
-import concert.domain.queuetoken.service.QueueTokenInfo;
-import concert.domain.queuetoken.service.QueueTokenService;
+import concert.domain.queuetoken.QueueTokenRedisRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.util.Comparator;
 import java.util.List;
 
 @Slf4j
@@ -19,39 +13,19 @@ import java.util.List;
 @RequiredArgsConstructor
 public class QueueCheckScheduled {
 
-    private final QueueTokenService queueTokenService;
-    private final QueueTokenRepository queueTokenRepository;
-    @Value("${custom.queue.max-capacity}")
-    private long maxQueuePassCapacity;
+    private final QueueTokenRedisRepository queueTokenRedisRepository;
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 5000)
-    public void passNextInQueue() throws Exception {
+    @Scheduled(initialDelay = 10000, fixedDelay = 10000)
+    public void passNextInQueue() {
 
-        List<QueueToken> tokens = queueTokenService.getProcessedTokens();
-        long remainingSeats = maxQueuePassCapacity - tokens.size();
+        List<String> nextTokens = queueTokenRedisRepository.dequeue(10L);
+        int expiryTime = 30;
 
-        if (remainingSeats > 0L) {
+        for (String nextToken : nextTokens) {
 
-            long nextProcessQueuePosition = tokens.stream()
-                    .max(Comparator.comparing(QueueToken::getQueuePosition))
-                    .map(QueueToken::getQueuePosition)
-                    .map(maxPosition -> maxPosition + 1L)
-                    .orElse(1L);
-
-            QueueToken queueToken = queueTokenRepository.getByQueuePosition(nextProcessQueuePosition)
-                    .orElseThrow(() -> {
-                        log.error("다음 대기가 없습니다.");
-                        return new Exception("다음 대기가 없습니다.");
-                    });
-
-            if (queueToken != null) {
-                queueTokenService.updateStatus(
-                        QueueTokenInfo.builder()
-                                .token(queueToken.getToken())
-                                .status(TokenStatus.PROCESSED)
-                                .build()
-                );
-            }
+            queueTokenRedisRepository.saveActiveToken(
+                    nextToken, expiryTime
+            );
         }
     }
 }

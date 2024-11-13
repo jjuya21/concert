@@ -19,15 +19,15 @@ public class RedisLockAspect {
 
     private final RedissonClient redissonClient;
 
-    @Around("@annotation(redisLock)")
-    public Object aroundRedisLock(ProceedingJoinPoint joinPoint, RedisLock redisLock) throws Throwable {
-        String lockName = redisLock.key();
+    @Around("@annotation(lockManager)")
+    public Object aroundRedisLock(ProceedingJoinPoint joinPoint, LockManager lockManager) throws Throwable {
+        String lockName = lockManager.key();
         RLock lock = redissonClient.getLock(lockName);
 
         boolean isLocked = false;
         try {
 
-            isLocked = lock.tryLock(redisLock.waitTime(), redisLock.leaseTime(), TimeUnit.SECONDS);
+            isLocked = lock.tryLock(lockManager.waitTime(), lockManager.leaseTime(), TimeUnit.SECONDS);
 
             if (isLocked) {
                 return joinPoint.proceed();

@@ -1,7 +1,7 @@
 package concert.domain.queuetoken.service;
 
 import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.QueueTokenRedisRepository;
+import concert.domain.queuetoken.QueueTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class QueueTokenService {
 
-    private final QueueTokenRedisRepository repository;
+    private final QueueTokenRepository repository;
 
     public QueueToken getQueueToken(QueueTokenInfo info) throws Exception {
 

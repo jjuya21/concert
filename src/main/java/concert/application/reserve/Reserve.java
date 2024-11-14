@@ -7,7 +7,6 @@ import concert.domain.reservation.ReservationStatus;
 import concert.domain.seat.SeatStatus;
 import concert.domain.seat.service.SeatInfo;
 import concert.domain.seat.service.SeatService;
-import concert.infrastructure.queuetoken.redis.ActiveTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,7 +17,6 @@ public class Reserve {
 
     private final ReservationRepository reservationRepository;
     private final SeatService seatService;
-    private final ActiveTokenRepository tokenRepository;
 
     @LockManager(key = "'seat.' + #command.seatId")
     @Transactional

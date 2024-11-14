@@ -3,7 +3,7 @@ package concert.domain.queuetoken;
 import java.util.List;
 import java.util.Optional;
 
-public interface QueueTokenRedisRepository {
+public interface QueueTokenRepository {
 
     void enqueue(String token);
 

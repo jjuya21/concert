@@ -36,7 +36,6 @@ public class RedisConfig {
 
     @Bean
     public RedisCacheManager cacheManager(RedisConnectionFactory redisConnectionFactory) {
-        // 기본 캐시 설정
         RedisCacheConfiguration cacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .entryTtl(Duration.ofMinutes(10)) // 캐시 유효 시간 설정
                 .disableCachingNullValues() // null 값은 캐시하지 않음

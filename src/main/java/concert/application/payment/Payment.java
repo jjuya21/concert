@@ -4,7 +4,7 @@ import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
 import concert.domain.payment.PaymentRepository;
 import concert.domain.payment.PaymentStatus;
-import concert.domain.queuetoken.QueueTokenRedisRepository;
+import concert.domain.queuetoken.QueueTokenRepository;
 import concert.domain.queuetoken.service.QueueTokenService;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
@@ -25,7 +25,7 @@ public class Payment {
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
     private final BalanceService balanceService;
-    private final QueueTokenRedisRepository queueTokenRedisRepository;
+    private final QueueTokenRepository queueTokenRepository;
     private final QueueTokenService queueTokenService;
     private final SeatService seatService;
 
@@ -60,7 +60,7 @@ public class Payment {
                         .build()
         );
 
-        queueTokenRedisRepository.deleteActiveToken(command.getToken());
+        queueTokenRepository.deleteActiveToken(command.getToken());
 
         return payment;
     }

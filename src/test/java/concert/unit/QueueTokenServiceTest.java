@@ -1,7 +1,7 @@
 package concert.unit;
 
 import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.QueueTokenRedisRepository;
+import concert.domain.queuetoken.QueueTokenRepository;
 import concert.domain.queuetoken.service.QueueTokenInfo;
 import concert.domain.queuetoken.service.QueueTokenService;
 import org.junit.jupiter.api.DisplayName;
@@ -21,7 +21,7 @@ public class QueueTokenServiceTest {
 
     private final String DEFAULT_TOKEN = "a8098c1a-f86e-11da-bd1a-00112444be1e";
     @Mock
-    private QueueTokenRedisRepository queueTokenRedisRepository;
+    private QueueTokenRepository queueTokenRepository;
     @InjectMocks
     private QueueTokenService queueTokenService;
 
@@ -29,7 +29,7 @@ public class QueueTokenServiceTest {
     @Test
     void getActiveTokenTest() throws Exception {
         // given
-        given(queueTokenRedisRepository.getActiveToken(DEFAULT_TOKEN)).willReturn(Optional.of(DEFAULT_TOKEN));
+        given(queueTokenRepository.getActiveToken(DEFAULT_TOKEN)).willReturn(Optional.of(DEFAULT_TOKEN));
 
         // when
         QueueToken result = queueTokenService.getQueueToken(QueueTokenInfo.builder().token(DEFAULT_TOKEN).build());
@@ -43,7 +43,7 @@ public class QueueTokenServiceTest {
     @Test
     void getQueuePositionTest() throws Exception {
         // given
-        given(queueTokenRedisRepository.getRank(DEFAULT_TOKEN)).willReturn(Optional.of(2L));
+        given(queueTokenRepository.getRank(DEFAULT_TOKEN)).willReturn(Optional.of(2L));
 
         // when
         QueueToken result = queueTokenService.getQueuePosition(

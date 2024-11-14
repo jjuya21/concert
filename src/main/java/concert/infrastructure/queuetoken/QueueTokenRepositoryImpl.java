@@ -1,6 +1,6 @@
-package concert.infrastructure.queuetoken.redis;
+package concert.infrastructure.queuetoken;
 
-import concert.domain.queuetoken.QueueTokenRedisRepository;
+import concert.domain.queuetoken.QueueTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -9,7 +9,7 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class QueueTokenRedisRepositoryImpl implements QueueTokenRedisRepository {
+public class QueueTokenRepositoryImpl implements QueueTokenRepository {
 
     private final ActiveTokenRepository activeTokenRepository;
     private final WaitingQueueRepository waitingQueueRepository;

@@ -1,20 +1,16 @@
 package concert.interfaces.common;
 
 import concert.interfaces.common.interceptor.ValidationTokenInterceptor;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
 
     private final ValidationTokenInterceptor validationTokenInterceptor;
-
-    @Autowired
-    public WebConfig(ValidationTokenInterceptor validationTokenInterceptor) {
-        this.validationTokenInterceptor = validationTokenInterceptor;
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {

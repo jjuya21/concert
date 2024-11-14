@@ -1,7 +1,7 @@
 package concert.application.createtoken;
 
 import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.QueueTokenRedisRepository;
+import concert.domain.queuetoken.QueueTokenRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,14 +12,14 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class CreateTokenService {
 
-    private final QueueTokenRedisRepository queueTokenRedisRepository;
+    private final QueueTokenRepository queueTokenRepository;
 
     @Transactional
     public QueueToken createToken() {
 
         String token = UUID.randomUUID().toString();
 
-        queueTokenRedisRepository.enqueue(token);
+        queueTokenRepository.enqueue(token);
 
         QueueToken queueToken = QueueToken.builder()
                 .token(token)

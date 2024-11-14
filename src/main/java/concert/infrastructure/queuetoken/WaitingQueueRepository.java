@@ -1,4 +1,4 @@
-package concert.infrastructure.queuetoken.redis;
+package concert.infrastructure.queuetoken;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ZSetOperations;

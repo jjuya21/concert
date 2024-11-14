@@ -3,7 +3,7 @@ package concert.intergration;
 import concert.application.createtoken.CreateTokenService;
 import concert.application.getqueueposition.GetQueuePosition;
 import concert.domain.queuetoken.QueueToken;
-import concert.domain.queuetoken.QueueTokenRedisRepository;
+import concert.domain.queuetoken.QueueTokenRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -18,7 +18,7 @@ class GetQueuePositionTest {
     private CreateTokenService createTokenService;
 
     @Autowired
-    private QueueTokenRedisRepository queueTokenRedisRepository;
+    private QueueTokenRepository queueTokenRepository;
 
     @Autowired
     private GetQueuePosition getQueuePosition;
@@ -34,7 +34,7 @@ class GetQueuePositionTest {
         QueueToken queueToken = getQueuePosition.getQueuePosition(token);
 
         // then
-        long queuePosition = queueTokenRedisRepository.getWaitingQueue().size();
+        long queuePosition = queueTokenRepository.getWaitingQueue().size();
 
         Assertions.assertThat(queueToken).isNotNull();
         Assertions.assertThat(queueToken.getToken()).isEqualTo(token);

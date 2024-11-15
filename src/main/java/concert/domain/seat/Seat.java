@@ -9,7 +9,9 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "SEAT_TABLE")
+@Table(name = "SEAT_TABLE", indexes = {
+        @Index(name = "idx_concert_item_id", columnList = "concert_item_id")
+})
 @Getter
 @Builder
 @NoArgsConstructor
@@ -21,11 +23,11 @@ public class Seat {
     @Column(nullable = false)
     private Long id;
 
-    @Column(name = "seat_no", nullable = false)
-    private Long seatNo;
-
     @Column(name = "concert_item_id", nullable = false)
     private Long concertItemId;
+
+    @Column(name = "seat_no", nullable = false)
+    private Long seatNo;
 
     @Column(nullable = false)
     private Long price;
@@ -36,10 +38,6 @@ public class Seat {
 
     @Column(name = "hold_expiry_time")
     private LocalDateTime holdExpiryTime;
-
-//    @Version
-//    @Builder.Default
-//    private Integer version = 0;
 
     public void setStatus(SeatStatus status) {
         this.status = status;

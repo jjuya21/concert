@@ -1,18 +1,15 @@
 package concert.domain.reservation;
 
-import concert.domain.payment.PaymentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.GenericGenerator;
-
-import java.util.UUID;
 
 @Entity
-@Table(name = "RESERVATION_TABLE")
+@Table(name = "RESERVATION_TABLE", indexes = {
+        @Index(name = "idx_user_id", columnList = "user_id")
+})
 @Getter
 @Builder
 @NoArgsConstructor

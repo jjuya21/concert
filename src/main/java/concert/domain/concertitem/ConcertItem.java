@@ -5,14 +5,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.time.LocalDate;
-import java.util.UUID;
 
 @Entity
-@Table(name = "CONCERTITEM_TABLE")
+@Table(name = "CONCERTITEM_TABLE", indexes = {
+        @Index(name = "idx_concertId", columnList = "concertId")
+})
 @Getter
 @Builder
 @NoArgsConstructor

@@ -1,20 +1,21 @@
 package concert.application.payment;
 
+import concert.application.event.ApplicationEventPublisher;
 import concert.domain.balance.service.BalanceInfo;
 import concert.domain.balance.service.BalanceService;
+import concert.domain.event.DomainEventPublisher;
 import concert.domain.payment.PaymentRepository;
 import concert.domain.payment.PaymentStatus;
 import concert.domain.queuetoken.QueueTokenRepository;
-import concert.domain.queuetoken.service.QueueTokenService;
 import concert.domain.reservation.Reservation;
 import concert.domain.reservation.ReservationRepository;
-import concert.domain.reservation.ReservationStatus;
-import concert.domain.seat.SeatStatus;
-import concert.domain.seat.service.SeatInfo;
-import concert.domain.seat.service.SeatService;
+import concert.domain.reservation.event.ReservationStatusUpdateEvent;
+import concert.domain.seat.event.SeatStatusUpdateEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDateTime;
 
@@ -24,32 +25,13 @@ public class Payment {
 
     private final ReservationRepository reservationRepository;
     private final PaymentRepository paymentRepository;
-    private final BalanceService balanceService;
     private final QueueTokenRepository queueTokenRepository;
-    private final QueueTokenService queueTokenService;
-    private final SeatService seatService;
+    private final ApplicationEventPublisher applicationEventPublisher;
+    private final DomainEventPublisher domainEventPublisher;
+    private final BalanceService balanceService;
 
     @Transactional
     public concert.domain.payment.Payment payment(PaymentCommand command) throws Exception {
-
-        Reservation reservation = reservationRepository.getReservation(command.getReservationId()).get();
-
-        balanceService.useBalance(
-                BalanceInfo.builder()
-                        .userId(command.getUserId())
-                        .amount(reservation.getPrice())
-                        .build()
-        );
-
-        reservation.setStatus(ReservationStatus.PAYED);
-        reservationRepository.update(reservation);
-
-        seatService.updateStatus(
-                SeatInfo.builder()
-                        .seatId(reservation.getSeatId())
-                        .status(SeatStatus.RESERVED)
-                        .build()
-        );
 
         concert.domain.payment.Payment payment = paymentRepository.create(
                 concert.domain.payment.Payment.builder()
@@ -60,8 +42,37 @@ public class Payment {
                         .build()
         );
 
-        queueTokenRepository.deleteActiveToken(command.getToken());
+        Reservation reservation = reservationRepository.getReservation(command.getReservationId())
+                .orElseThrow(() -> new Exception("존재하지 않는 예매정보입니다"));
+
+        balanceService.useBalance(
+                BalanceInfo.builder()
+                        .userId(command.getUserId())
+                        .amount(reservation.getPrice())
+                        .build()
+        );
+
+        applicationEventPublisher.publish(new PaymentSuccessEvent(
+                command.getReservationId(), reservation.getSeatId(), command.getToken())
+        );
 
         return payment;
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.BEFORE_COMMIT)
+    void handlePaymentSuccess(PaymentSuccessEvent event) {
+
+        domainEventPublisher.publish(
+                new ReservationStatusUpdateEvent(event.getReservationId())
+        );
+        domainEventPublisher.publish(
+                new SeatStatusUpdateEvent(event.getSeatId())
+        );
+    }
+
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    void expireQueueToken(PaymentSuccessEvent event) {
+
+        queueTokenRepository.expireActiveToken(event.getToken());
     }
 }

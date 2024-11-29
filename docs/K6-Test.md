@@ -78,3 +78,83 @@
     - 실패율 0.00%로 모든 요청이 성공적으로 수행되었다.
 - HTTP 요청 시간(http_req_duration)
     - 평균 39.24ms, 90%의 요청이 143.07ms 이내에 완료되었다.
+
+## STEP 20: 성능 분석 및 개선
+
+### **4. 테스트 탐색 및 개선**
+
+시나리오2에서 평균 응답 시간은 39.24ms였다.
+토큰 발급 로직치고 너무 오래걸린다고 판단했다.
+
+#### 기존 코드: 토큰 생성 -> 큐에 삽입 -> 반환
+
+```java
+
+@Service
+@RequiredArgsConstructor
+public class CreateTokenService {
+
+    private final QueueTokenRepository queueTokenRepository;
+
+    @Transactional
+    public QueueToken createToken() {
+
+        String token = UUID.randomUUID().toString();
+
+        queueTokenRepository.enqueue(token);
+
+        QueueToken queueToken = QueueToken.builder()
+                .token(token)
+                .build();
+
+        return queueToken;
+    }
+}
+```
+
+#### 수정 코드: 토큰 생성 -> 큐에 삽입 / 반환
+
+```java
+
+@Service
+@RequiredArgsConstructor
+public class CreateTokenService {
+
+    private final QueueTokenRepository queueTokenRepository;
+
+    @Transactional
+    public QueueToken createToken() {
+
+        String token = UUID.randomUUID().toString();
+
+        // 비동기 메서드 호출
+        enqueueTokenAsync(token);
+
+        QueueToken queueToken = QueueToken.builder()
+                .token(token)
+                .build();
+
+        return queueToken;
+    }
+
+    @Async
+    protected void enqueueTokenAsync(String token) {
+        queueTokenRepository.enqueue(token);
+    }
+}
+```
+
+기존 큐에 삽입하던 부분을 비동기 처리로 수정
+
+응답속도를 39.24m에서 23.89ms까지 단축
+
+## 회고
+
+단순하게 접근하여 단순한 성능 개선만 시도해 보았다.
+
+조금 더 공부하여 여러 부분들을 모니터링해서 시각화하고 싶었졌다.
+(DB, Kafka, Redis)
+
+9주간 진행하면서 단위 테스트, 통합 테스트만 하다가 새로운 영역을 배운거 같아 뿌듯합니다.
+
+코치님 10주간 수고하셨습니다.
